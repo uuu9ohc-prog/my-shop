@@ -1,2 +1,4 @@
 /assets
 /PROJECT_CONTEXT_TEMPLATE.md
+node_modules
+dist

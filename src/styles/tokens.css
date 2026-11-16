@@ -1,0 +1,51 @@
+/* 손뜬 스튜디오 디자인 토큰 (출처: docs/06-site-design.md 8번, sonttuen-design-system/tokens.json) */
+:root {
+  /* color */
+  --surface: #fffef3;
+  --surface-card: #fffaf6;
+  --red-500: #d63a2a;
+  --red-600: #bf3022;
+  --on-red: #ffffff;
+  --pink-200: #f8d3d3;
+  --pink-100: #f9e3df;
+  --peach-200: #f6e2d2;
+  --sky-200: #d7e3f1;
+  --ink: #2e2a26;
+  --ink-soft: #5e574f;
+  --ink-muted: #6b635a;
+  --ink-faint: #8a8178;
+  --line: #f0d6cd;
+  --line-dashed: #e4b9af;
+  --dot-off: #ebc6be;
+  --control-off: #c0beb5;
+  --dim: rgba(46, 42, 38, 0.55); /* OV-01 어두운 배경 (ink 기반) */
+
+  /* font — 고딕(Pretendard) 하나로 통일 (2026-11-16 답변) */
+  --font-sans: Pretendard, "Noto Sans KR", "Apple SD Gothic Neo", system-ui, sans-serif;
+  --font-display: Pretendard, "Noto Sans KR", "Apple SD Gothic Neo", system-ui, sans-serif;
+
+  /* spacing */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 80px;
+  --space-page: 120px;
+
+  /* radius */
+  --radius-sm: 16px;
+  --radius-md: 20px;
+  --radius-lg: 28px;
+  --radius-pill: 999px;
+
+  /* size */
+  --control-lg: 60px;
+  --control-md: 56px;
+  --icon-btn-lg: 52px;
+  --icon-btn-sm: 40px;
+  --header-h: 84px;
+  --content-w: 1200px;
+}

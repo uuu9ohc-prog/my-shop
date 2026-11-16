@@ -1,0 +1,25 @@
+{
+  "v": 3,
+  "assetGroups": {},
+  "blobs": {},
+  "createdOnFiles": {
+    "at": "2026-11-13T03:03:53Z",
+    "v": 1
+  },
+  "docs": {
+    "readme": "project/README.md",
+    "sections": []
+  },
+  "groups": [],
+  "lastChange": {
+    "at": "2026-11-13T03:08:40Z",
+    "by": "Claude",
+    "note": "모든 섹션 제목 앞뒤로 ✦ 표시",
+    "via": "Claude (chat)"
+  },
+  "layout": "files",
+  "libraries": [],
+  "namespace": "SonttuenStudio",
+  "sections": {},
+  "title": "손뜬 스튜디오"
+}

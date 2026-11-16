@@ -1,0 +1,52 @@
+<!-- @dsCard height=288 -->
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>손뜬 스튜디오</title>
+<style>
+  html, body { margin:0; height:100%; }
+  body { background:var(--surface); color:var(--ink); font-family:var(--font-display); overflow:hidden; }
+  .cover { position:relative; height:288px; overflow:hidden; }
+  .art { position:absolute; top:0; left:480px; width:480px; height:288px; overflow:hidden; }
+  .art svg { display:block; width:480px; height:288px; }
+  .pink { fill:var(--pink-200); }
+  .peach { fill:var(--peach-200); }
+  .red { fill:var(--red-500); }
+  .sky { fill:var(--sky-200); }
+  .blk { rx:var(--radius-lg); }
+  .words { position:absolute; left:var(--space-7); bottom:var(--space-6); max-width:440px; }
+  .name { margin:0; font-size:100px; line-height:.95; font-weight:900; letter-spacing:-.03em; color:var(--red-500); }
+  .tag { margin:var(--space-3) 0 0 4px; font-family:var(--font-sans); font-size:14px; line-height:20px; color:var(--ink-muted); }
+</style>
+</head>
+<body>
+<div class="cover">
+<div class="art" aria-hidden="true">
+<svg viewBox="0 0 480 288" width="480" height="288">
+<!--
+  blocks      pink-200 168×232 slab bled off the top (hero block) · peach-200 knit cloud 200×200 (the signature frame) · red-500 pill 120×40 (the one accent, small) · sky-200 disc 64 — ≈40% of 960×288
+  arrangement one tall pink slab with a puffy peach cloud overlapping its right edge, satellites below; bottoms near space-6 above the edge, space-5 gutters
+  pattern     literal motif — the KnitFrame scallop ("털실 뭉치처럼 몽글몽글한 사진 틀"): a 4×4 ring of radius-50 discs around a core, built from circles only
+  scales      gutters space-5 (24); slab corners radius-lg (28); pill rx = half its 40 height (radius-pill); disc r 32
+-->
+<rect class="pink blk" x="24" y="-28" width="168" height="260" rx="28"/>
+<g class="peach">
+  <rect x="166" y="34" width="180" height="180"/>
+  <circle cx="176" cy="44" r="28"/><circle cx="232" cy="44" r="28"/><circle cx="288" cy="44" r="28"/><circle cx="336" cy="44" r="28"/>
+  <circle cx="176" cy="100" r="28"/><circle cx="336" cy="100" r="28"/>
+  <circle cx="176" cy="156" r="28"/><circle cx="336" cy="156" r="28"/>
+  <circle cx="176" cy="204" r="28"/><circle cx="232" cy="204" r="28"/><circle cx="288" cy="204" r="28"/><circle cx="336" cy="204" r="28"/>
+</g>
+<rect class="red" x="216" y="240" width="120" height="40" rx="20"/>
+<circle class="sky" cx="416" cy="232" r="32"/>
+<circle class="red" cx="416" cy="64" r="12"/>
+</svg>
+</div>
+<div class="words">
+<h1 class="name">손뜬<br>스튜디오</h1>
+<p class="tag">한 땀 한 땀, 소중한 인형을 위하여</p>
+</div>
+</div>
+</body>
+</html>
