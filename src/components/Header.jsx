@@ -1,5 +1,5 @@
 import { useEffect, useId, useRef, useState } from 'react'
-import { Link, NavLink, useLocation } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { BagIcon, HeartIcon, LogoMark, MenuIcon, SearchIcon } from './Icons.jsx'
 
 // 헤더 아이콘 — 모양만 있고 기능 없음 (2026-11-16 답변, 기능은 [미정])
@@ -67,10 +67,6 @@ export default function Header() {
           <LogoMark />
           손뜬 스튜디오
         </Link>
-        <nav className="site-header__nav" aria-label="주 메뉴">
-          {/* M-02 디자인 → P2 */}
-          <NavLink to="/designs">디자인</NavLink>
-        </nav>
         <div className="site-header__actions" ref={wrapRef}>
           {PLAIN_ICONS.map(({ label, Icon }) => (
             <button key={label} type="button" className="header-icon" aria-label={label}>
