@@ -179,9 +179,10 @@ svg {
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
-  font-family: var(--font-display);
+  /* 로고 글자 — 차이 활짝체 Bold (2026-11-16 답변) */
+  font-family: 'Chai Hwaljjak', var(--font-display);
   font-size: 22px;
-  font-weight: 900;
+  font-weight: 700;
   letter-spacing: -0.03em;
   color: var(--ink);
   text-decoration: none;
@@ -219,7 +220,7 @@ svg {
 /* ---------- 푸터 (높이 190) ---------- */
 .site-footer {
   min-height: 190px;
-  background: var(--pink-200);
+  background: #fdb7c1; /* 2026-11-16 답변 */
   padding: var(--space-7) 0 var(--space-8);
 }
 
@@ -452,19 +453,66 @@ svg {
   align-content: center;
   justify-items: start;
   gap: var(--space-5);
-  padding: var(--space-7);
+  --hero-pad: var(--space-7);
+  padding: var(--hero-pad);
   border-radius: var(--radius-lg);
   background: var(--pink-200);
+  /* 글자·버튼 크기를 이 상자 너비 대비 비율로 */
+  container-type: inline-size;
+  /* --hero-u = 여백을 포함한 상자 전체 너비의 1% (100cqw는 여백을 뺀 안쪽 너비) */
+  --hero-u: calc((100cqw + 2 * var(--hero-pad)) / 100);
+}
+
+/*
+  히어로 글자·버튼 크기 — Figma 85:14 상자(너비 387px) 대비 비율 그대로
+  제목 36/387 = 9.3% · 본문 16/387 = 4.13% · 버튼 157×44 → 40.57% × 11.37%
+  (1440px 화면 상자 약 588px 기준: 제목 약 55px, 본문 약 24px, 버튼 약 239×67px)
+  앞줄 px 값은 cqw를 지원하지 않는 브라우저용
+*/
+/* 글꼴 — Figma 85:15 차이 활짝체 Bold, 85:16·85:17 Pretendard GOV Medium */
+.hero__text .display-hero {
+  font-family: 'Chai Hwaljjak', var(--font-sans);
+  font-weight: 700;
+  letter-spacing: 0;
+  white-space: nowrap; /* Figma 85:15와 같이 두 줄 고정 */
+  font-size: 55px;
+  font-size: calc(var(--hero-u) * 9.3);
 }
 
 .hero__text p {
-  font-size: 17px;
+  font-family: 'Pretendard GOV', var(--font-sans);
+  font-weight: 500;
+  font-size: 24px;
+  font-size: calc(var(--hero-u) * 4.13);
   line-height: 1.75;
   color: var(--ink-soft); /* 핑크 위 본문은 ink-soft (대비 5.2:1) */
 }
 
 .hero__text .btn {
   margin-top: var(--space-4);
+}
+
+.hero__text .btn--primary {
+  height: 67px;
+  height: calc(var(--hero-u) * 11.37);
+  min-width: 239px;
+  min-width: calc(var(--hero-u) * 40.57);
+  gap: calc(var(--hero-u) * 1.55);
+  padding: 0 calc(var(--hero-u) * 1.55) 0 calc(var(--hero-u) * 4.13);
+  font-size: 20px;
+  font-size: calc(var(--hero-u) * 3.36);
+}
+
+.hero__text .btn__arrow {
+  width: 49px;
+  width: calc(var(--hero-u) * 8.27);
+  height: 49px;
+  height: calc(var(--hero-u) * 8.27);
+}
+
+.hero__text .btn__arrow svg {
+  width: calc(var(--hero-u) * 3.6);
+  height: calc(var(--hero-u) * 3.6);
 }
 
 .hero__image {
@@ -890,6 +938,16 @@ svg {
   height: auto;
 }
 
+/* S1-1 대표 이미지 — 뜨개 모양 틀 안을 가득 채움 */
+.hero__photo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
 .hero__dolls {
   display: flex;
   align-items: flex-end;
@@ -1220,12 +1278,8 @@ svg {
 
 /* 작은 데스크탑·노트북 (1024~1279px): 2단 구성 유지, 크기만 줄임 */
 @media (max-width: 1279px) {
-  .display-hero {
-    font-size: clamp(40px, 4.2vw, 56px);
-  }
-
   .hero__text {
-    padding: var(--space-6);
+    --hero-pad: var(--space-6);
   }
 
   .custom {

@@ -7,6 +7,7 @@ import { ArrowLeft, ArrowRight } from '../components/Icons.jsx'
 import { DESIGNS, getDesign } from '../data/designs.js'
 import { COLORS } from '../data/options.js'
 import yarnPhoto from '../assets/woolen-yarn.jpg'
+import heroPhoto from '../images/hero-main.png'
 import { useOrder } from '../state/OrderContext.jsx'
 import { useMediaQuery, useSwipe } from '../hooks.js'
 
@@ -91,11 +92,15 @@ export default function P1Home() {
               소중한 인형을 위하여
             </h1>
             <p>
-              디자인을 고르고 색과 털실, 크기를 정하면 손뜬 스튜디오가
+              디자인을 고르고 색과 털실, 크기를 정하면
               <br />
-              정성껏 떠서 보내 드려요.
+              손뜬 스튜디오가 정성껏 떠서 보내 드려요.
             </p>
-            <p>내 공간에 오래 두고 아낄, 하나뿐인 인형을 만들어 보세요.</p>
+            <p>
+              내 공간에 오래 두고 아낄,
+              <br />
+              하나뿐인 인형을 만들어 보세요.
+            </p>
             {/* B1-1 핵심 행동 → P2 */}
             <Link to="/designs" className="btn btn--primary">
               나만의 인형 만들기
@@ -104,12 +109,8 @@ export default function P1Home() {
               </span>
             </Link>
           </div>
-          <Placeholder label="손뜬 인형 세 친구 — 고양이, 토끼, 곰" knit className="hero__image">
-            <div className="hero__dolls">
-              <DollArt design={getDesign('cat')} />
-              <DollArt design={rabbit} yarnId="velvet" />
-              <DollArt design={getDesign('bear')} />
-            </div>
+          <Placeholder label="파스텔 털실 뭉치와 뜨개바늘, 레이스 도일리 대표 이미지" knit className="hero__image">
+            <img className="hero__photo" src={heroPhoto} alt="" />
           </Placeholder>
         </section>
 
