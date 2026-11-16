@@ -4,6 +4,7 @@ import Placeholder from '../components/Placeholder.jsx'
 import Footer from '../components/Footer.jsx'
 import DollArt from '../components/DollArt.jsx'
 import { ArrowRight } from '../components/Icons.jsx'
+import TextType from '../components/TextType.jsx'
 import { getDesign } from '../data/designs.js'
 import { COLORS } from '../data/options.js'
 import yarnPhoto from '../assets/woolen-yarn.jpg'
@@ -55,6 +56,14 @@ function StepArt({ no }) {
   )
 }
 
+// S1-1 소개 문구 타이핑 효과: 첫 문단을 다 친 뒤 잠깐 쉬고 두 번째 문단을 이어서 침
+const HERO_LINE_1 = '디자인을 고르고 색과 털실, 크기를 정하면\n손뜬 스튜디오가 정성껏 떠서 보내 드려요.'
+const HERO_LINE_2 = '내 공간에 오래 두고 아낄,\n하나뿐인 인형을 만들어 보세요.'
+const HERO_START = 400
+const HERO_SPEED = 55
+const HERO_HIGHLIGHT = '#fffed3' // 형광펜 색
+const HERO_LINE_2_START = HERO_START + Array.from(HERO_LINE_1).length * HERO_SPEED + 500
+
 const SCENES = ['책상 위', '침대 머리맡', '선반 위', '창가', '소파 위', '선물 상자 속']
 
 export default function P1Home() {
@@ -75,16 +84,21 @@ export default function P1Home() {
               <br />
               소중한 인형을 위하여
             </h1>
-            <p>
-              디자인을 고르고 색과 털실, 크기를 정하면
-              <br />
-              손뜬 스튜디오가 정성껏 떠서 보내 드려요.
-            </p>
-            <p>
-              내 공간에 오래 두고 아낄,
-              <br />
-              하나뿐인 인형을 만들어 보세요.
-            </p>
+            <TextType
+              text={HERO_LINE_1}
+              startDelay={HERO_START}
+              typingSpeed={HERO_SPEED}
+              hideCursorWhenDone
+              highlights={['디자인을 고르고 색과 털실, 크기를 정하면', '정성껏 떠서 보내 드려요.']}
+              highlightColor={HERO_HIGHLIGHT}
+            />
+            <TextType
+              text={HERO_LINE_2}
+              startDelay={HERO_LINE_2_START}
+              typingSpeed={HERO_SPEED}
+              highlights={['하나뿐인 인형']}
+              highlightColor={HERO_HIGHLIGHT}
+            />
             {/* B1-1 핵심 행동 → P2 */}
             <Link to="/designs" className="btn btn--primary">
               나만의 인형 만들기
