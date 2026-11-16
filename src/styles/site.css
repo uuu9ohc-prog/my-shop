@@ -595,29 +595,22 @@ svg {
 }
 
 /* ---------- 디자인 카드 (P1 S1-2, P2 S2-2) ---------- */
-/* S1-2 카드 슬라이드 — 한 칸씩 0.45초 동안 밀림 (5단계) */
-.slider {
+/* S1-2 디자인 둘러보기 — 사진 한 장, 누르면 P2 (Figma 96:43) */
+.browse-photo {
+  display: block;
   overflow: hidden;
-  margin: -4px; /* 포커스 테두리가 잘리지 않게 */
-  padding: 4px;
-  touch-action: pan-y;
+  border-radius: var(--radius-md);
 }
 
-.card-row {
-  --gap: var(--space-5);
-  --card-w: calc((100% - (var(--per-view) - 1) * var(--gap)) / var(--per-view));
-  display: flex;
-  gap: var(--gap);
-  transform: translateX(calc(var(--slide) * -1 * (var(--card-w) + var(--gap))));
-  transition: transform 0.45s cubic-bezier(0.22, 0.61, 0.36, 1);
+.browse-photo img {
+  display: block;
+  width: 100%;
+  height: auto;
+  transition: transform 0.4s ease;
 }
 
-.card-row > li {
-  flex: 0 0 var(--card-w);
-}
-
-.slider + .progress .progress__bar {
-  transition: margin-left 0.45s cubic-bezier(0.22, 0.61, 0.36, 1), width 0.45s;
+.browse-photo:hover img {
+  transform: scale(1.02);
 }
 
 .design-card {

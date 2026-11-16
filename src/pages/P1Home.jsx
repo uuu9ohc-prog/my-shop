@@ -1,15 +1,15 @@
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import Placeholder from '../components/Placeholder.jsx'
 import Footer from '../components/Footer.jsx'
 import DollArt from '../components/DollArt.jsx'
-import { ArrowLeft, ArrowRight } from '../components/Icons.jsx'
-import { DESIGNS, getDesign } from '../data/designs.js'
+import { ArrowRight } from '../components/Icons.jsx'
+import { getDesign } from '../data/designs.js'
 import { COLORS } from '../data/options.js'
 import yarnPhoto from '../assets/woolen-yarn.jpg'
 import heroPhoto from '../images/hero-main.png'
-import { useOrder } from '../state/OrderContext.jsx'
-import { useMediaQuery, useSwipe } from '../hooks.js'
+import browsePhoto from '../images/browse-dolls.png'
+import { useSwipe } from '../hooks.js'
 
 const STEPS = [
   { no: '01', title: '디자인 고르기', text: '여섯 동물 중 하나를 골라요' },
@@ -58,27 +58,11 @@ function StepArt({ no }) {
 const SCENES = ['책상 위', '침대 머리맡', '선반 위', '창가', '소파 위', '선물 상자 속']
 
 export default function P1Home() {
-  const navigate = useNavigate()
-  const { startDesign } = useOrder()
-  const [slideState, setSlide] = useState(0)
   const [scene, setScene] = useState(0)
-
-  // 한 화면에 카드 4개 (작은 화면 2개)
-  const perView = useMediaQuery('(max-width: 768px)') ? 2 : 4
-  const maxSlide = DESIGNS.length - perView
-  const slide = Math.min(slideState, maxSlide)
-  const prevSlide = () => setSlide(Math.max(0, slide - 1))
-  const nextSlide = () => setSlide(Math.min(maxSlide, slide + 1))
-  const cardSwipe = useSwipe({ onPrev: prevSlide, onNext: nextSlide })
 
   const nextScene = (scene + 1) % SCENES.length
   const prevScene = (scene - 1 + SCENES.length) % SCENES.length
   const sceneSwipe = useSwipe({ onPrev: () => setScene(prevScene), onNext: () => setScene(nextScene) })
-
-  const choose = (id) => {
-    startDesign(id)
-    navigate(`/custom/${id}`)
-  }
 
   return (
     <>
@@ -109,12 +93,16 @@ export default function P1Home() {
               </span>
             </Link>
           </div>
-          <Placeholder label="파스텔 털실 뭉치와 뜨개바늘, 레이스 도일리 대표 이미지" knit className="hero__image">
+          <Placeholder
+            label="파스텔 털실 뭉치와 뜨개바늘, 레이스 도일리 대표 이미지"
+            knit
+            className="hero__image"
+          >
             <img className="hero__photo" src={heroPhoto} alt="" />
           </Placeholder>
         </section>
 
-        {/* S1-2 디자인 둘러보기 (카드 슬라이드) */}
+        {/* S1-2 디자인 둘러보기 */}
         <section id="browse" className="section container" aria-labelledby="browse-title">
           <div className="section__head">
             <h2 id="browse-title" className="section-title">
@@ -126,75 +114,16 @@ export default function P1Home() {
                 ✦
               </span>
             </h2>
-            <div className="arrows">
-              <button
-                type="button"
-                className="icon-btn"
-                aria-label="이전 디자인"
-                disabled={slide === 0}
-                onClick={prevSlide}
-              >
-                <ArrowLeft />
-              </button>
-              <button
-                type="button"
-                className="icon-btn"
-                aria-label="다음 디자인"
-                disabled={slide === maxSlide}
-                onClick={nextSlide}
-              >
-                <ArrowRight />
-              </button>
-            </div>
           </div>
-          <div className="slider" {...cardSwipe}>
-            <ul className="card-row" style={{ '--per-view': perView, '--slide': slide }}>
-              {DESIGNS.map((d, i) => {
-                const hidden = i < slide || i >= slide + perView
-                return (
-                  <li key={d.id} aria-hidden={hidden || undefined}>
-                    {/* B1-2 ~ B1-7 → P3 (그 디자인으로 시작) */}
-                    <button
-                      type="button"
-                      className="design-card"
-                      tabIndex={hidden ? -1 : undefined}
-                      onClick={() => choose(d.id)}
-                    >
-                      <Placeholder
-                        label={`${d.name} 인형 이미지`}
-                        tone={d.tone}
-                        className="design-card__image"
-                      >
-                        <DollArt design={d} />
-                      </Placeholder>
-                      <span className="design-card__foot">
-                        <span className="design-card__name">{d.name}</span>
-                        <span className="design-card__go" aria-hidden="true">
-                          <ArrowRight />
-                        </span>
-                      </span>
-                    </button>
-                  </li>
-                )
-              })}
-            </ul>
-          </div>
-          <div
-            className="progress"
-            role="progressbar"
-            aria-label="디자인 카드 위치"
-            aria-valuemin={1}
-            aria-valuemax={maxSlide + 1}
-            aria-valuenow={slide + 1}
-          >
-            <div
-              className="progress__bar"
-              style={{
-                width: `${(perView / DESIGNS.length) * 100}%`,
-                marginLeft: `${(slide / DESIGNS.length) * 100}%`,
-              }}
+          {/* S1-2 디자인 둘러보기 — 여섯 친구 사진 한 장, 누르면 P2 디자인 선택 (Figma 96:43, 2026-11-16 답변) */}
+          <Link to="/designs" className="browse-photo" aria-label="디자인 보러 가기 — 강아지, 고양이, 토끼, 곰, 호랑이, 오리">
+            <img
+              src={browsePhoto}
+              alt=""
+              width="2007"
+              height="758"
             />
-          </div>
+          </Link>
         </section>
 
         {/* S1-3 만드는 순서 안내 */}
