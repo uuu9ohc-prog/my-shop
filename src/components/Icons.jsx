@@ -16,6 +16,44 @@ export function ArrowLeft() {
   )
 }
 
+// 검색 (돋보기)
+export function SearchIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true">
+      <circle cx="10.5" cy="10.5" r="6" />
+      <path d="M15 15l4.5 4.5" />
+    </svg>
+  )
+}
+
+// 좋아요 (하트)
+export function HeartIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" aria-hidden="true">
+      <path d="M12 19.5s-7-4.3-7-9.4A3.9 3.9 0 0 1 12 8a3.9 3.9 0 0 1 7 2.1c0 5.1-7 9.4-7 9.4z" />
+    </svg>
+  )
+}
+
+// 장바구니 (쇼핑백)
+export function BagIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" strokeLinecap="round" aria-hidden="true">
+      <path d="M6 8.5h12l-.8 11H6.8z" />
+      <path d="M9 8.5V7a3 3 0 0 1 6 0v1.5" />
+    </svg>
+  )
+}
+
+// 메뉴 (줄 세 개)
+export function MenuIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
+      <path d="M5 8h14M5 12h14M5 16h14" />
+    </svg>
+  )
+}
+
 // 털실 뭉치 = "인형 사진이 들어갈 자리"
 export function YarnBall() {
   return (

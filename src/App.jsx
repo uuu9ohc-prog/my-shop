@@ -21,12 +21,20 @@ function WithHeader() {
   )
 }
 
-// 페이지를 옮길 때마다 맨 위에서 시작
+// 페이지를 옮길 때마다 맨 위에서 시작. 주소에 #구역 이 있으면 그 구역으로 이동 (예: /home#steps)
 function ScrollToTop() {
-  const { pathname } = useLocation()
+  const { pathname, hash } = useLocation()
   useEffect(() => {
+    if (hash) {
+      const target = document.getElementById(hash.slice(1))
+      if (target) {
+        const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+        target.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' })
+        return
+      }
+    }
     window.scrollTo(0, 0)
-  }, [pathname])
+  }, [pathname, hash])
   return null
 }
 

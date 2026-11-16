@@ -115,7 +115,7 @@ export default function P1Home() {
         </section>
 
         {/* S1-2 디자인 둘러보기 (카드 슬라이드) */}
-        <section className="section container" aria-labelledby="browse-title">
+        <section id="browse" className="section container" aria-labelledby="browse-title">
           <div className="section__head">
             <h2 id="browse-title" className="section-title">
               <span className="spark" aria-hidden="true">
@@ -198,7 +198,7 @@ export default function P1Home() {
         </section>
 
         {/* S1-3 만드는 순서 안내 */}
-        <section className="section container" aria-labelledby="steps-title">
+        <section id="steps" className="section container" aria-labelledby="steps-title">
           <h2 id="steps-title" className="section-title section-title--center">
             <span className="spark" aria-hidden="true">
               ✦
@@ -224,7 +224,7 @@ export default function P1Home() {
         </section>
 
         {/* S1-4 인형 인테리어나 실 사용예 (3분할) */}
-        <section className="section container scenes" aria-labelledby="scenes-title">
+        <section id="reviews" className="section container scenes" aria-labelledby="scenes-title">
           <div className="scenes__main-wrap" {...sceneSwipe}>
             <Placeholder
               key={scene}
