@@ -278,6 +278,17 @@ const ChevronRight = () => (
     <path d="M9 5l7 7-7 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
   </svg>
 )
+// 가장 처음/끝으로: 세로 막대 + 꺾쇠
+const FirstIcon = () => (
+  <svg width="30" height="30" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <path d="M6 5v14M17 5l-7 7 7 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+)
+const LastIcon = () => (
+  <svg width="30" height="30" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <path d="M18 5v14M7 5l7 7-7 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+)
 const PlayIcon = () => (
   <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true">
     <path d="M7 4.5v15a1 1 0 0 0 1.5.86l12.5-7.5a1 1 0 0 0 0-1.72L8.5 3.64A1 1 0 0 0 7 4.5z" fill="currentColor" />
@@ -577,6 +588,12 @@ export default function AlbumRail({
     } else if (e.key === 'ArrowRight') {
       e.preventDefault()
       step(1)
+    } else if (e.key === 'Home') {
+      e.preventDefault()
+      goTo(0)
+    } else if (e.key === 'End') {
+      e.preventDefault()
+      goTo(maxIndex)
     } else if (e.key === 'Enter' && onSelect && e.target === e.currentTarget) {
       e.preventDefault()
       const index = clamp(targetRef.current, 0, maxIndex)
@@ -665,6 +682,15 @@ export default function AlbumRail({
       <div className="album-rail__controls">
         <button
           type="button"
+          className="album-rail__arrow album-rail__arrow--edge"
+          aria-label="처음 앨범으로"
+          disabled={active === 0}
+          onClick={() => goTo(0)}
+        >
+          <FirstIcon />
+        </button>
+        <button
+          type="button"
           className="album-rail__arrow"
           aria-label="이전 앨범"
           disabled={active === 0}
@@ -697,6 +723,15 @@ export default function AlbumRail({
           onClick={() => step(1)}
         >
           <ChevronRight />
+        </button>
+        <button
+          type="button"
+          className="album-rail__arrow album-rail__arrow--edge"
+          aria-label="마지막 앨범으로"
+          disabled={active === maxIndex}
+          onClick={() => goTo(maxIndex)}
+        >
+          <LastIcon />
         </button>
       </div>
     </div>

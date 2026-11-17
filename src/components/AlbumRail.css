@@ -240,7 +240,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  width: min(420px, 90%);
+  width: min(520px, 94%);
   margin: 0 auto;
 }
 
@@ -262,6 +262,20 @@
 .album-rail__arrow svg {
   width: 30px;
   height: 30px;
+}
+
+/* 처음/끝으로 버튼 — 터치 영역 44px는 유지하고 옆 꺾쇠 버튼에 바짝 붙임 */
+.album-rail__arrow--edge svg {
+  width: 24px;
+  height: 24px;
+}
+
+.album-rail__arrow--edge:first-child {
+  margin-right: -8px;
+}
+
+.album-rail__arrow--edge:last-child {
+  margin-left: -8px;
 }
 
 .album-rail__arrow:hover:not(:disabled) {
