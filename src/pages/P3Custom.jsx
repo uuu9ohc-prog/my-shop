@@ -1,11 +1,18 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link, Navigate, useLocation, useNavigate, useParams } from 'react-router-dom'
 import DollPreview from '../components/DollPreview.jsx'
+import PhotoViewer from '../components/PhotoViewer.jsx'
+import yarnFluffy from '../images/yarn-fluffy.jpg'
+import yarnVelvet from '../images/yarn-velvet.jpg'
+import yarnChunky from '../images/yarn-chunky.jpg'
 import { ArrowRight } from '../components/Icons.jsx'
 import { getDesign } from '../data/designs.js'
 import { COLORS, SIZES, YARNS, getYarn } from '../data/options.js'
 import { getMissing, useOrder } from '../state/OrderContext.jsx'
 import { parseShare } from '../state/share.js'
+
+// S3-4 털실 사진 (Figma 137:26) — 누르면 크게 보기
+const YARN_PHOTOS = { fluffy: yarnFluffy, velvet: yarnVelvet, chunky: yarnChunky }
 
 // 빠진 항목 표시 (5단계: 알림 + 해당 섹션 표시)
 function NeedBadge({ show }) {
@@ -21,6 +28,7 @@ export default function P3Custom() {
   const { order, startDesign, loadShared, setColor, setYarn, setSize } = useOrder()
   const [part, setPart] = useState(0)
   const [checked, setChecked] = useState(false) // 완성하기를 한 번 눌렀는지
+  const [viewYarn, setViewYarn] = useState(false) // 털실 사진 크게 보기
   const refs = { color: useRef(null), yarn: useRef(null), size: useRef(null) }
 
   // 주소로 바로 들어온 경우에도 그 디자인으로 시작 (같은 디자인이면 고른 값 유지)
@@ -143,15 +151,34 @@ export default function P3Custom() {
                 </button>
               ))}
             </div>
-            <div className="yarn-info" aria-live="polite">
-              {yarn && (
+            {/* 털실 설명 (Figma 137:26) — 왼쪽 이름·설명·안내, 오른쪽 사진(누르면 크게) */}
+            <div className={`yarn-info ${yarn ? 'yarn-info--photo' : ''}`} aria-live="polite">
+              {yarn ? (
                 <>
-                  <p className="yarn-info__title">{yarn.name}</p>
-                  <p>{yarn.description}</p>
+                  <div className="yarn-info__text">
+                    <p className="yarn-info__title">{yarn.name}</p>
+                    <p>{yarn.description}</p>
+                    <p className="yarn-info__hint">
+                      <span aria-hidden="true">♥</span> 사진을 클릭하면 크게 볼 수 있어요!
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    className="yarn-info__photo"
+                    aria-label={`${yarn.name} 사진 크게 보기`}
+                    onClick={() => setViewYarn(true)}
+                  >
+                    <img src={YARN_PHOTOS[yarn.id]} alt="" />
+                    <span className="yarn-info__photo-label">털실 사진</span>
+                  </button>
                 </>
+              ) : (
+                <p className="note">털실을 고르면 설명과 사진이 나와요.</p>
               )}
-              <p className="note">다른 털실을 누르면 그 털실의 설명으로 바뀌어요.</p>
             </div>
+            {viewYarn && yarn && (
+              <PhotoViewer src={YARN_PHOTOS[yarn.id]} alt={`${yarn.name} 사진`} onClose={() => setViewYarn(false)} />
+            )}
           </section>
 
           {/* S3-5 크기 선택 */}
