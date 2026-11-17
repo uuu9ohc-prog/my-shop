@@ -10,7 +10,7 @@ import sceneWindow from '../images/scene-window.jpg'
 import sceneBed from '../images/scene-bed.jpg'
 import sceneBeach from '../images/scene-beach.jpg'
 import PixelSnow from '../components/PixelSnow.jsx'
-import { useSwipe } from '../hooks.js'
+import { useScrollReveal, useSwipe } from '../hooks.js'
 
 // S1-1 소개 문구 타이핑 효과: 첫 문단을 다 친 뒤 잠깐 쉬고 두 번째 문단을 이어서 침
 const HERO_LINE_1 = '디자인을 고르고 색과 털실, 크기를 정하면\n손뜬 스튜디오가 정성껏 떠서 보내 드려요.'
@@ -64,12 +64,16 @@ export default function P1Home() {
     }
   }, [])
 
+  // 섹션 스크롤 등장 효과 (Scroll Reveal, 2026-11-17) — 순서는 --reveal-order 로 차례차례
+  const mainRef = useRef(null)
+  useScrollReveal(mainRef)
+
   return (
     <>
-      <main>
+      <main ref={mainRef}>
         {/* S1-1 브랜드 인상 영역 (2분할) */}
         <section className="section container hero" aria-labelledby="hero-title">
-          <div className="hero__text">
+          <div className="hero__text" data-reveal>
             <h1 id="hero-title" className="display-hero">
               한 땀 한 땀,
               <br />
@@ -101,6 +105,8 @@ export default function P1Home() {
           <Placeholder
             label="파스텔 털실 뭉치와 뜨개바늘, 레이스 도일리 대표 이미지"
             className="hero__image"
+            data-reveal
+            style={{ '--reveal-order': 1 }}
           >
             <img className="hero__photo" src={heroPhoto} alt="" />
             <PixelSnow className="hero__snow" variant="round" density={0.35} />
@@ -109,7 +115,7 @@ export default function P1Home() {
 
         {/* S1-4 인형 인테리어나 실 사용예 (3분할) */}
         <section ref={scenesRef} id="reviews" className="section container scenes" aria-labelledby="scenes-title">
-          <div className="scenes__main-wrap" {...sceneSwipe}>
+          <div className="scenes__main-wrap" data-reveal {...sceneSwipe}>
             <Placeholder
               key={scene}
               label={`사용 예시 사진 — ${SCENES[scene].name}`}
@@ -135,7 +141,7 @@ export default function P1Home() {
               <ArrowRight />
             </button>
           </div>
-          <div className="scenes__text">
+          <div className="scenes__text" data-reveal style={{ '--reveal-order': 1 }}>
             <h2 id="scenes-title" className="display-sub">
               어디에 두어도 포근하게
             </h2>
@@ -148,7 +154,7 @@ export default function P1Home() {
               디자인 보러 가기
             </Link>
           </div>
-          <div className="scenes__side">
+          <div className="scenes__side" data-reveal style={{ '--reveal-order': 2 }}>
             <button
               type="button"
               className="scenes__next"

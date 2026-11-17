@@ -35,3 +35,32 @@ export function useSwipe({ onPrev, onNext, threshold = 40 }) {
     },
   }
 }
+
+// 스크롤 등장 효과 — root 안의 [data-reveal] 요소가 화면에 들어오면 'is-revealed'를 붙임 (한 번만)
+// 숨김 스타일은 root에 'reveal-ready'가 붙은 뒤에만 적용 → JS가 없거나 실패해도 내용은 보임
+// 동작 줄이기 설정이면 효과 없이 바로 보여 줌
+export function useScrollReveal(rootRef) {
+  useEffect(() => {
+    const root = rootRef.current
+    if (!root) return undefined
+    const items = Array.from(root.querySelectorAll('[data-reveal]'))
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    if (reduce || !('IntersectionObserver' in window)) {
+      items.forEach((el) => el.classList.add('is-revealed'))
+      return undefined
+    }
+    root.classList.add('reveal-ready')
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return
+          entry.target.classList.add('is-revealed')
+          io.unobserve(entry.target)
+        })
+      },
+      { threshold: 0.15, rootMargin: '0px 0px -8% 0px' },
+    )
+    items.forEach((el) => io.observe(el))
+    return () => io.disconnect()
+  }, [rootRef])
+}

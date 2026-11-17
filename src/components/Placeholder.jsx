@@ -4,13 +4,13 @@ import { YarnBall } from './Icons.jsx'
 // tone: 'pink' | 'sky' | 'peach' (없으면 pink-100)
 // knit: 뜨개 모양 틀(KnitFrame) — 한 화면에 한두 번만
 // 실제 이미지는 4단계 에셋 삽입에서 교체합니다.
-export default function Placeholder({ label, tone, knit = false, className = '', children }) {
+export default function Placeholder({ label, tone, knit = false, className = '', children, ...rest }) {
   const classes = ['placeholder', tone && `placeholder--${tone}`, knit && 'placeholder--knit', className]
     .filter(Boolean)
     .join(' ')
 
   return (
-    <div className={classes} role="img" aria-label={label}>
+    <div className={classes} role="img" aria-label={label} {...rest}>
       {children ?? (
         <>
           <YarnBall />
