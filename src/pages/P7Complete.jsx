@@ -1,6 +1,5 @@
 import { useNavigate } from 'react-router-dom'
-import Placeholder from '../components/Placeholder.jsx'
-import { YarnPull } from '../components/YarnArt.jsx'
+import BasketScene from '../components/BasketScene.jsx'
 import { formatPrice, getPrice } from '../data/pricing.js'
 import { getSize, getYarn } from '../data/options.js'
 import { getSummary, useOrder } from '../state/OrderContext.jsx'
@@ -44,9 +43,14 @@ export default function P7Complete() {
       <section className="page-title complete-message">
         <h1>주문이 완료되었습니다.</h1>
         <p>소중한 인형 친구는 손뜬 스튜디오가 한 땀 한 땀 만들고 있어요 ♬</p>
-        <Placeholder label={`고른 털실(${yarn?.name})이 뽑히는 연출 이미지`} tone="peach" className="complete-message__image">
-          <YarnPull colorId={order.colors[0]} />
-        </Placeholder>
+        {/* 털실이 쌓인 바구니에 고른 인형이 함께 있는 이미지 (2026-11-17 답변) */}
+        <div className="complete-message__image">
+          <BasketScene
+            design={summary.design}
+            colors={order.colors}
+            label={`털실이 쌓인 바구니 안의 ${summary.design.name} 인형`}
+          />
+        </div>
       </section>
 
       {/* S7-3 하단 버튼 */}

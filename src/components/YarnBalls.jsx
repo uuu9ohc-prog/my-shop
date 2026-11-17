@@ -8,7 +8,7 @@ import { useId } from 'react'
   외부 사진은 쓰지 않고 SVG로 직접 그림 — 색만 바꿔 인형마다 다르게
 */
 
-function mix(hex, target, amount) {
+export function mix(hex, target, amount) {
   const n = parseInt(hex.slice(1), 16)
   const t = target === 'white' ? 255 : 0
   const ch = (shift) => Math.round(((n >> shift) & 255) * (1 - amount) + t * amount)
@@ -16,7 +16,7 @@ function mix(hex, target, amount) {
 }
 
 /** 털실 한 가닥: 테두리 그늘 → 바탕 → 꼬임 결 → 윗면 빛 */
-function Strand({ d, w, tone, transform }) {
+export function Strand({ d, w, tone, transform }) {
   return (
     <g transform={transform} fill="none" strokeLinecap="round">
       <path d={d} stroke={tone.deep} strokeWidth={w} />
@@ -45,7 +45,8 @@ function Band({ r, angle, tone, count, w, flip = false }) {
   return <g transform={`rotate(${angle})`}>{arcs}</g>
 }
 
-function Ball({ id, cx, cy, r, tone }) {
+// shade: 가장자리 그늘 진하기 (파스텔 장면에서는 옅게)
+export function Ball({ id, cx, cy, r, tone, shade = 0.38 }) {
   const w = r * 0.13 // 굵은 털실
   return (
     <g transform={`translate(${cx} ${cy})`}>
@@ -56,7 +57,7 @@ function Ball({ id, cx, cy, r, tone }) {
         {/* 공 모양 음영: 가장자리 어둡게 */}
         <radialGradient id={`${id}-shade`} cx="0.4" cy="0.36" r="0.7">
           <stop offset="0.45" stopColor="#000" stopOpacity="0" />
-          <stop offset="1" stopColor="#1e140f" stopOpacity="0.38" />
+          <stop offset="1" stopColor="#1e140f" stopOpacity={shade} />
         </radialGradient>
         <radialGradient id={`${id}-shine`} cx="0.34" cy="0.28" r="0.42">
           <stop offset="0" stopColor="#fff" stopOpacity="0.35" />
@@ -78,7 +79,7 @@ function Ball({ id, cx, cy, r, tone }) {
 }
 
 /** 짧게 잘린 실 끝 — 올이 몇 가닥 풀림 */
-function Frayed({ x, y, angle, tone, w }) {
+export function Frayed({ x, y, angle, tone, w }) {
   return (
     <g transform={`translate(${x} ${y}) rotate(${angle})`} stroke={tone.base} strokeLinecap="round" fill="none">
       <path d={`M0 0 L${w * 1.1} ${-w * 0.35}`} strokeWidth={w * 0.22} />
@@ -88,7 +89,7 @@ function Frayed({ x, y, angle, tone, w }) {
   )
 }
 
-const toneOf = (hex) => ({
+export const toneOf = (hex) => ({
   base: hex,
   deep: mix(hex, 'black', 0.3),
   light: mix(hex, 'white', 0.5),
