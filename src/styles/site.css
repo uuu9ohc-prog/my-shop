@@ -595,22 +595,25 @@ svg {
 }
 
 /* ---------- 디자인 카드 (P1 S1-2, P2 S2-2) ---------- */
-/* S1-2 디자인 둘러보기 — 사진 한 장, 누르면 P2 (Figma 96:43) */
-.browse-photo {
-  display: block;
-  overflow: hidden;
-  border-radius: var(--radius-md);
+/* S1-2 디자인 둘러보기 — AlbumRail(3D 곡면 캐러셀)을 사이트 크림 배경에 맞춘 색 */
+.browse-rail.album-rail {
+  --bg: transparent;
+  --text: var(--ink);
+  --text-muted: var(--ink-muted);
+  --tick-color: var(--line-dashed);
+  --shade: var(--surface);
+  --card-shadow: 0 24px 48px rgba(46, 42, 38, 0.18);
+  --accent: var(--ink-faint);
 }
 
-.browse-photo img {
-  display: block;
-  width: 100%;
-  height: auto;
-  transition: transform 0.4s ease;
+.browse-rail.album-rail:focus-visible {
+  box-shadow: none;
+  outline: 2px solid var(--red-500);
+  outline-offset: 3px;
 }
 
-.browse-photo:hover img {
-  transform: scale(1.02);
+.browse-rail .album-rail__title {
+  font-weight: 700;
 }
 
 .design-card {

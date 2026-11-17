@@ -9,7 +9,7 @@ import { getDesign } from '../data/designs.js'
 import { COLORS } from '../data/options.js'
 import yarnPhoto from '../assets/woolen-yarn.jpg'
 import heroPhoto from '../images/hero-main.png'
-import browsePhoto from '../images/browse-dolls.png'
+import BrowseSlider from '../components/BrowseSlider.jsx'
 import { useSwipe } from '../hooks.js'
 
 const STEPS = [
@@ -118,26 +118,20 @@ export default function P1Home() {
 
         {/* S1-2 디자인 둘러보기 */}
         <section id="browse" className="section container" aria-labelledby="browse-title">
-          <div className="section__head">
-            <h2 id="browse-title" className="section-title">
-              <span className="spark" aria-hidden="true">
-                ✦
-              </span>
-              디자인 둘러보기
-              <span className="spark" aria-hidden="true">
-                ✦
-              </span>
-            </h2>
-          </div>
-          {/* S1-2 디자인 둘러보기 — 여섯 친구 사진 한 장, 누르면 P2 디자인 선택 (Figma 96:43, 2026-11-16 답변) */}
-          <Link to="/designs" className="browse-photo" aria-label="디자인 보러 가기 — 강아지, 고양이, 토끼, 곰, 호랑이, 오리">
-            <img
-              src={browsePhoto}
-              alt=""
-              width="2007"
-              height="758"
-            />
-          </Link>
+          {/* S1-2 디자인 둘러보기 — 여섯 친구 사진 가로 슬라이드, 누르면 그 디자인으로 꾸미기 (2026-11-16 답변) */}
+          <BrowseSlider
+            title={
+              <h2 id="browse-title" className="section-title">
+                <span className="spark" aria-hidden="true">
+                  ✦
+                </span>
+                디자인 둘러보기
+                <span className="spark" aria-hidden="true">
+                  ✦
+                </span>
+              </h2>
+            }
+          />
         </section>
 
         {/* S1-3 만드는 순서 안내 */}

@@ -1,0 +1,302 @@
+/*
+  AlbumRail — 3D 곡면 커버플로 캐러셀
+  카드 위치·기울기·깊이는 JS(motion value)가 인라인 transform으로 넣고, 여기서는 모양만 잡습니다.
+*/
+
+.album-rail {
+  --bg: #0b0b0b;
+  --card-size: var(--card-size-base, clamp(180px, 22vw, 260px));
+  --card-radius: 12px;
+  --card-shadow: 0 30px 60px rgba(0, 0, 0, 0.6);
+  --text: #fff;
+  --text-muted: #a3a3a3;
+  --tick-color: #525252;
+  --shade: #000; /* 옆 카드를 덮는 색 — 배경색과 맞추면 옆 카드가 배경으로 스며듦 */
+  --accent: #737373;
+  --font: 'Pretendard GOV', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, 'Apple SD Gothic Neo',
+    'Noto Sans KR', sans-serif;
+
+  position: relative;
+  width: 100%;
+  padding: 24px 0 32px;
+  overflow: hidden;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.album-rail:focus {
+  outline: none;
+}
+
+.album-rail:focus-visible {
+  box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.3);
+}
+
+/* ---------- 무대 (카드가 놓이는 곳) ---------- */
+.album-rail__stage {
+  position: relative;
+  height: calc(var(--card-size) + 96px);
+  perspective: 1200px;
+  perspective-origin: 50% 50%;
+  touch-action: pan-y;
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.album-rail__stage.is-dragging {
+  cursor: grabbing;
+}
+
+.album-rail__card {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: var(--card-size);
+  height: var(--card-size);
+  margin: calc(var(--card-size) / -2) 0 0 calc(var(--card-size) / -2);
+  will-change: transform, opacity;
+}
+
+.album-rail__sleeve {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: var(--card-radius);
+  background: #1a1a1a;
+  box-shadow: var(--card-shadow);
+}
+
+.album-rail__card img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+  -webkit-user-drag: none;
+}
+
+/* 가운데에서 멀어질수록 어둡게 (filter 대신 덮개 투명도로 처리해 가볍게) */
+.album-rail__shade {
+  position: absolute;
+  inset: 0;
+  background: var(--shade);
+  pointer-events: none;
+}
+
+/* onSelect가 있으면 가운데 카드는 누를 수 있다는 표시 */
+.album-rail.has-select .album-rail__card[aria-hidden='false'] {
+  cursor: pointer;
+}
+
+/* ---------- 레코드판 (슬리브 안에 들어 있다가 재생하면 오른쪽 위로 반쯤 나옴) ---------- */
+.album-rail__record {
+  position: absolute;
+  z-index: 0;
+  top: 3%;
+  left: 3%;
+  width: 94%;
+  height: 94%;
+  border-radius: 50%;
+  pointer-events: none;
+  transform: translate(0, 0);
+  transition: transform 600ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.album-rail__record.is-out {
+  transform: translate(50%, -10%);
+}
+
+/* 고정된 빛 반사 — 판이 돌아도 반사는 제자리 */
+.album-rail__record::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 30deg,
+    transparent 0deg,
+    rgba(255, 255, 255, 0.07) 25deg,
+    transparent 55deg,
+    transparent 180deg,
+    rgba(255, 255, 255, 0.05) 205deg,
+    transparent 235deg
+  );
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.06),
+    0 18px 40px rgba(0, 0, 0, 0.55);
+}
+
+.album-rail__record-disc {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle, #0b0b0b 0 1.6%, transparent 1.9%),
+    radial-gradient(circle, var(--accent) 0 16%, #080808 16.5% 18%, transparent 18.5%),
+    repeating-radial-gradient(circle, #111 0 1.5px, #1d1d1d 2px 2.5px);
+  animation: album-rail-spin 3.6s linear infinite;
+  animation-play-state: paused;
+}
+
+/* 라벨 위 작은 표시 — 판이 도는 게 보이도록 */
+.album-rail__record-disc::before {
+  content: '';
+  position: absolute;
+  top: 37%;
+  left: 50%;
+  width: 9%;
+  height: 1.6%;
+  border-radius: 1px;
+  background: rgba(255, 255, 255, 0.6);
+  transform: translateX(-50%);
+}
+
+.album-rail__record.is-out .album-rail__record-disc {
+  animation-play-state: running;
+}
+
+@keyframes album-rail-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ---------- 제목 · 아티스트 ---------- */
+.album-rail__info {
+  min-height: 56px;
+  margin: 4px auto 20px;
+  padding: 0 16px;
+  text-align: center;
+}
+
+.album-rail__title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--text);
+}
+
+.album-rail__artist {
+  margin: 4px 0 0;
+  font-size: 14px;
+  line-height: 1.4;
+  color: var(--text-muted);
+}
+
+/* ---------- 컨트롤 바 ---------- */
+.album-rail__controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: min(420px, 90%);
+  margin: 0 auto;
+}
+
+.album-rail__arrow {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: color 150ms ease;
+}
+
+.album-rail__arrow:hover:not(:disabled) {
+  color: var(--text);
+}
+
+.album-rail__arrow:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.album-rail__arrow:focus-visible,
+.album-rail__play:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.7);
+  outline-offset: 2px;
+}
+
+.album-rail__ruler {
+  position: relative;
+  flex: 1;
+  height: 40px;
+}
+
+.album-rail__ticks {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 20%, #000 80%, transparent);
+  mask-image: linear-gradient(to right, transparent, #000 20%, #000 80%, transparent);
+}
+
+.album-rail__ticks-track {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: flex;
+  gap: 16px;
+  margin: -5px 0 0 -0.5px;
+  will-change: transform;
+}
+
+.album-rail__tick {
+  flex: none;
+  width: 1px;
+  height: 10px;
+  background: var(--tick-color);
+}
+
+.album-rail__play {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  margin: -18px 0 0 -18px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--accent) 70%, #000);
+  color: #fff;
+  cursor: pointer;
+  transition: background-color 300ms ease;
+}
+
+.album-rail__play svg {
+  opacity: 0.8;
+}
+
+/* ---------- 작은 화면: 카드 크기 약 30% 축소 (간격은 JS에서 같이 줄임) ---------- */
+@media (max-width: 640px) {
+  .album-rail {
+    --card-size: calc(var(--card-size-base, clamp(180px, 22vw, 260px)) * 0.7);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .album-rail__play,
+  .album-rail__record {
+    transition: none;
+  }
+
+  .album-rail__record-disc {
+    animation: none;
+  }
+}

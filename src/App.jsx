@@ -10,6 +10,7 @@ import P4Making from './pages/P4Making.jsx'
 import P5Result from './pages/P5Result.jsx'
 import P6Order from './pages/P6Order.jsx'
 import P7Complete from './pages/P7Complete.jsx'
+import AlbumRailDemo from './pages/AlbumRailDemo.tsx'
 
 // 헤더가 있는 페이지 (P1, P2, P3, P5, P6, P7)
 function WithHeader() {
@@ -45,6 +46,7 @@ export default function App() {
       <Routes>
         {/* 헤더 없음: P0, P4 */}
         <Route path="/" element={<P0Intro />} />
+        <Route path="/album-rail" element={<AlbumRailDemo />} />
         <Route
           path="/making"
           element={
