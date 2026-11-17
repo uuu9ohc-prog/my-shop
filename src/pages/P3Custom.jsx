@@ -82,7 +82,7 @@ export default function P3Custom() {
       <div className="custom">
         {/* S3-2 인형 미리보기 (왼쪽) */}
         <section className="custom__preview" aria-label="인형 미리보기">
-          <DollPreview design={design} colors={colors} label={`${design.name} 인형 미리보기`} showParts />
+          <DollPreview design={design} colors={colors} label={`${design.name} 인형 미리보기`} showParts photo />
           <p className="note">털실 느낌은 완성 화면에서 확인할 수 있어요.</p>
         </section>
 

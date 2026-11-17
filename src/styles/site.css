@@ -1141,6 +1141,16 @@ svg {
   padding: var(--space-4);
 }
 
+/* S3-2 사진 인형 (PhotoDoll) — 일러스트와 같은 자리·크기 */
+.photo-doll {
+  display: block;
+  width: 100%;
+  max-width: 380px;
+  height: auto;
+  /* 배경을 따낸 인형이 떠 보이지 않게 바닥 그림자 */
+  filter: drop-shadow(0 10px 12px rgba(46, 42, 38, 0.12));
+}
+
 /* S3-2 미리보기 — 디자인 색과 상관없이 카드 배경을 모두 흰색으로 */
 .custom__preview .doll,
 .custom__preview .doll__parts {
@@ -1358,6 +1368,15 @@ svg {
 
 .overlay__preview .doll-art {
   max-width: 300px;
+}
+
+/* 사진 인형 크기 — P5 크게, OV-01 미리보기 작게 */
+.doll--large .photo-doll {
+  max-width: 440px;
+}
+
+.overlay__preview .photo-doll {
+  max-width: 260px;
 }
 
 .overlay__flash {

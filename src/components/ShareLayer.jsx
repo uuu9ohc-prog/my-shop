@@ -3,11 +3,40 @@ import { copyText } from '../state/share.js'
 
 const SIZE = 1080 // 저장 이미지 크기 (정사각형 px)
 
-// 미리보기 영역의 인형 그림(SVG)을 파스텔 바탕 PNG로 만들어 내려받음
+// 미리보기 영역의 인형 그림(SVG) 또는 사진 인형(canvas)을 파스텔 바탕 PNG로 만들어 내려받음
+async function download(canvas, fileName) {
+  const png = await new Promise((resolve) => canvas.toBlob(resolve, 'image/png'))
+  if (!png) return false
+  const link = document.createElement('a')
+  link.href = URL.createObjectURL(png)
+  link.download = fileName
+  link.click()
+  setTimeout(() => URL.revokeObjectURL(link.href), 1000)
+  return true
+}
+
 async function saveAsPng(previewEl, fileName) {
   const figure = previewEl.querySelector('.doll')
+  if (!figure) return false
+
+  // 사진 인형: 색을 입힌 canvas를 그대로 바탕 위에 그림
+  const photo = previewEl.querySelector('canvas.photo-doll')
+  if (photo && photo.width) {
+    const canvas = document.createElement('canvas')
+    canvas.width = SIZE
+    canvas.height = SIZE
+    const ctx = canvas.getContext('2d')
+    ctx.fillStyle = getComputedStyle(figure).backgroundColor
+    ctx.fillRect(0, 0, SIZE, SIZE)
+    const scale = (SIZE * 0.84) / Math.max(photo.width, photo.height)
+    const w = photo.width * scale
+    const h = photo.height * scale
+    ctx.drawImage(photo, (SIZE - w) / 2, (SIZE - h) / 2, w, h)
+    return download(canvas, fileName)
+  }
+
   const svg = previewEl.querySelector('svg.doll-art')
-  if (!figure || !svg) return false
+  if (!svg) return false
 
   const clone = svg.cloneNode(true)
   clone.setAttribute('xmlns', 'http://www.w3.org/2000/svg')
@@ -33,13 +62,7 @@ async function saveAsPng(previewEl, fileName) {
     const w = (h * 240) / 280
     ctx.drawImage(img, (SIZE - w) / 2, (SIZE - h) / 2, w, h)
 
-    const png = await new Promise((resolve) => canvas.toBlob(resolve, 'image/png'))
-    const link = document.createElement('a')
-    link.href = URL.createObjectURL(png)
-    link.download = fileName
-    link.click()
-    setTimeout(() => URL.revokeObjectURL(link.href), 1000)
-    return true
+    return await download(canvas, fileName)
   } catch {
     return false
   } finally {

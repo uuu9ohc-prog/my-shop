@@ -27,6 +27,7 @@ export default function P5Result() {
           yarnId={order.yarnId}
           label={imageLabel}
           className="doll--large"
+          photo
         />
       </section>
 
@@ -60,7 +61,7 @@ export default function P5Result() {
           fileName={`손뜬-${summary.design.name}.png`}
           shareUrl={buildShareUrl(order)}
         >
-          <DollPreview design={summary.design} colors={order.colors} yarnId={order.yarnId} label={imageLabel} />
+          <DollPreview design={summary.design} colors={order.colors} yarnId={order.yarnId} label={imageLabel} photo />
         </ShareLayer>
       )}
     </main>

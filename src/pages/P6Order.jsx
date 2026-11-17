@@ -24,6 +24,7 @@ export default function P6Order() {
           yarnId={order.yarnId}
           label={`완성 인형 이미지 (${getYarn(order.yarnId)?.name})`}
           className="doll--small"
+          photo
         />
         <SummaryList rows={summary.rows} />
       </section>
