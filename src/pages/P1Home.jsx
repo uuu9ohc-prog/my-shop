@@ -5,7 +5,10 @@ import Footer from '../components/Footer.jsx'
 import { ArrowRight } from '../components/Icons.jsx'
 import TextType from '../components/TextType.jsx'
 import heroPhoto from '../images/hero-direction-animal.jpg'
-import scenePhoto from '../images/scene-direction-animal.webp'
+import scenePicnic from '../images/scene-picnic.webp'
+import sceneWindow from '../images/scene-window.jpg'
+import sceneBed from '../images/scene-bed.jpg'
+import sceneBeach from '../images/scene-beach.jpg'
 import BrowseSlider from '../components/BrowseSlider.jsx'
 import PixelSnow from '../components/PixelSnow.jsx'
 import { useSwipe } from '../hooks.js'
@@ -20,12 +23,10 @@ const HERO_LINE_2_START = HERO_START + Array.from(HERO_LINE_1).length * HERO_SPE
 
 // S1-4 사용 예시 장면 — photo 가 있으면 사진, 없으면 자리 표시. 사진이 생기면 photo 만 채우면 됨
 const SCENES = [
-  { name: '책상 위', photo: scenePhoto },
-  { name: '침대 머리맡', photo: null },
-  { name: '선반 위', photo: null },
-  { name: '창가', photo: null },
-  { name: '소파 위', photo: null },
-  { name: '선물 상자 속', photo: null },
+  { name: '잔디 위 소풍', photo: scenePicnic },
+  { name: '창가', photo: sceneWindow },
+  { name: '침대 위', photo: sceneBed },
+  { name: '바닷가', photo: sceneBeach },
 ]
 
 export default function P1Home() {
@@ -113,8 +114,8 @@ export default function P1Home() {
               어디에 두어도 포근하게
             </h2>
             <p>
-              책상 위, 침대 머리맡, 창가에.
-              <br />내 공간에 오래 두고 아낄 인형을 만나 보세요.
+              소풍 가는 잔디밭부터 창가, 침대 위, 노을 지는 바닷가까지.
+              <br />어디든 함께하며 오래 아낄 인형을 만나 보세요.
             </p>
             {/* B1-8 → P2 */}
             <Link to="/designs" className="btn btn--outline">
