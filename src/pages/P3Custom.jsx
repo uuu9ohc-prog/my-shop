@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { Link, Navigate, useLocation, useNavigate, useParams } from 'react-router-dom'
 import DollPreview from '../components/DollPreview.jsx'
 import PhotoViewer from '../components/PhotoViewer.jsx'
+import StepProgress from '../components/StepProgress.jsx'
 import yarnFluffy from '../images/yarn-fluffy.jpg'
 import yarnVelvet from '../images/yarn-velvet.jpg'
 import yarnChunky from '../images/yarn-chunky.jpg'
@@ -71,12 +72,28 @@ export default function P3Custom() {
     target.current?.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'center' })
   }
 
+  // 진행 막대: 색상(부위마다 한 칸) → 털실 → 크기
+  const progressGroups = [
+    { key: 'color', label: '색상', items: design.parts.map((_, i) => Boolean(colors[i])) },
+    { key: 'yarn', label: '털실', items: [Boolean(order.yarnId)] },
+    { key: 'size', label: '크기', items: [Boolean(order.sizeId)] },
+  ]
+  const jumpTo = (key) => {
+    if (key === 'color') {
+      const firstPart = design.parts.findIndex((_, i) => !colors[i])
+      if (firstPart >= 0) setPart(firstPart)
+    }
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    refs[key].current?.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'center' })
+  }
+
   return (
     <main className="container page">
       {/* S3-1 진행 안내 */}
       <section className="page-title">
         <h1>{design.name} 꾸미기</h1>
         <p>색 → 털실 → 크기 순서로 골라 주세요. 고른 색은 미리보기에 바로 보여요.</p>
+        <StepProgress groups={progressGroups} onJump={jumpTo} />
       </section>
 
       <div className="custom">
