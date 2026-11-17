@@ -8,8 +8,9 @@ import TextType from '../components/TextType.jsx'
 import { getDesign } from '../data/designs.js'
 import { COLORS } from '../data/options.js'
 import yarnPhoto from '../assets/woolen-yarn.jpg'
-import heroPhoto from '../images/hero-main.png'
+import heroPhoto from '../images/hero-direction-animal.jpg'
 import BrowseSlider from '../components/BrowseSlider.jsx'
+import PixelSnow from '../components/PixelSnow.jsx'
 import { useSwipe } from '../hooks.js'
 
 const STEPS = [
@@ -109,10 +110,10 @@ export default function P1Home() {
           </div>
           <Placeholder
             label="파스텔 털실 뭉치와 뜨개바늘, 레이스 도일리 대표 이미지"
-            knit
             className="hero__image"
           >
             <img className="hero__photo" src={heroPhoto} alt="" />
+            <PixelSnow className="hero__snow" variant="round" density={0.35} />
           </Placeholder>
         </section>
 

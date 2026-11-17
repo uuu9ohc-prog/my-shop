@@ -590,8 +590,11 @@ svg {
   height: calc(var(--hero-u) * 3.6);
 }
 
+/* 옆 글 칸(.hero__text)과 같은 둥근 사각 — 큰 블록 모서리 28 */
 .hero__image {
   min-height: 560px;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
 }
 
 /* ---------- 디자인 카드 (P1 S1-2, P2 S2-2) ---------- */
@@ -1009,7 +1012,7 @@ svg {
   height: auto;
 }
 
-/* S1-1 대표 이미지 — 뜨개 모양 틀 안을 가득 채움 */
+/* S1-1 대표 이미지 — 둥근 사각 틀 안을 가득 채움 */
 .hero__photo {
   position: absolute;
   inset: 0;
@@ -1440,4 +1443,11 @@ svg {
   .site-footer__text {
     text-align: left;
   }
+}
+
+/* 히어로 사진 위 픽셀 눈 효과 */
+.hero__snow.pixel-snow-container {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
 }
