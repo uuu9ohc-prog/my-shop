@@ -528,20 +528,23 @@ svg {
   align-content: center;
   justify-items: start;
   gap: var(--space-5);
-  --hero-pad: var(--space-7);
+  --hero-pad: var(--space-6); /* 48 → 32, 히어로 높이 줄임 (2026-11-17) */
   padding: var(--hero-pad);
   border-radius: var(--radius-lg);
   background: var(--pink-200);
   /* 글자·버튼 크기를 이 상자 너비 대비 비율로 */
   container-type: inline-size;
-  /* --hero-u = 여백을 포함한 상자 전체 너비의 1% (100cqw는 여백을 뺀 안쪽 너비) */
-  --hero-u: calc((100cqw + 2 * var(--hero-pad)) / 100);
+  /* --hero-u = 여백을 포함한 상자 전체 너비의 1% (100cqw는 여백을 뺀 안쪽 너비)
+     × 0.9: 글씨·버튼을 Figma 비율보다 10% 작게 — 히어로 높이 약 480px (2026-11-17 답변) */
+  --hero-scale: 0.9;
+  --hero-u: calc((100cqw + 2 * var(--hero-pad)) / 100 * var(--hero-scale));
 }
 
 /*
   히어로 글자·버튼 크기 — Figma 85:14 상자(너비 387px) 대비 비율 그대로
   제목 36/387 = 9.3% · 본문 16/387 = 4.13% · 버튼 157×44 → 40.57% × 11.37%
   (1440px 화면 상자 약 588px 기준: 제목 약 55px, 본문 약 24px, 버튼 약 239×67px)
+  → --hero-scale 0.9 적용 후: 제목 약 45px(제목만 8.5%), 본문 약 22px, 버튼 약 215×60px (2026-11-17)
   앞줄 px 값은 cqw를 지원하지 않는 브라우저용
 */
 /* 글꼴 — Figma 85:15 차이 활짝체 Bold, 85:16·85:17 Pretendard GOV Medium */
@@ -550,14 +553,15 @@ svg {
   font-weight: 700;
   letter-spacing: 0;
   white-space: nowrap; /* Figma 85:15와 같이 두 줄 고정 */
-  font-size: 55px;
-  font-size: calc(var(--hero-u) * 9.3);
+  font-size: 45px;
+  /* 제목만 더 작게: 8.5% × 0.9 → 1440px 화면 약 45px (2026-11-17 답변, 이전 9.3%) */
+  font-size: calc(var(--hero-u) * 8.5);
 }
 
 .hero__text p {
   font-family: 'Pretendard GOV', var(--font-sans);
   font-weight: 500;
-  font-size: 24px;
+  font-size: 22px;
   font-size: calc(var(--hero-u) * 4.13);
   line-height: 1.75;
   color: var(--ink-soft); /* 핑크 위 본문은 ink-soft (대비 5.2:1) */
@@ -568,20 +572,20 @@ svg {
 }
 
 .hero__text .btn--primary {
-  height: 67px;
+  height: 60px;
   height: calc(var(--hero-u) * 11.37);
-  min-width: 239px;
+  min-width: 215px;
   min-width: calc(var(--hero-u) * 40.57);
   gap: calc(var(--hero-u) * 1.55);
   padding: 0 calc(var(--hero-u) * 1.55) 0 calc(var(--hero-u) * 4.13);
-  font-size: 20px;
+  font-size: 18px;
   font-size: calc(var(--hero-u) * 3.36);
 }
 
 .hero__text .btn__arrow {
-  width: 49px;
+  width: 44px;
   width: calc(var(--hero-u) * 8.27);
-  height: 49px;
+  height: 44px;
   height: calc(var(--hero-u) * 8.27);
 }
 
@@ -592,7 +596,7 @@ svg {
 
 /* 옆 글 칸(.hero__text)과 같은 둥근 사각 — 큰 블록 모서리 28 */
 .hero__image {
-  min-height: 560px;
+  min-height: 480px; /* 560 → 480 (2026-11-17 답변) */
   border-radius: var(--radius-lg);
   overflow: hidden;
 }
@@ -1140,6 +1144,22 @@ svg {
   height: 100%;
   object-fit: cover;
   object-position: center;
+  transition: transform 0.6s ease;
+}
+
+/* 마우스를 올리면 사진이 천천히 확대 (2026-11-17 답변) */
+.hero__image:hover .hero__photo {
+  transform: scale(1.08);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero__photo {
+    transition: none;
+  }
+
+  .hero__image:hover .hero__photo {
+    transform: none;
+  }
 }
 
 .hero__dolls {
