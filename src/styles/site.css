@@ -719,6 +719,15 @@ svg {
   aspect-ratio: 1 / 1;
 }
 
+/* S1-4 장면 사진 — 큰 사진(뜨개 모양 틀)·다음 장면 썸네일을 가득 채움 */
+.scenes__photo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
 .scenes__text {
   display: grid;
   justify-items: start;
@@ -745,6 +754,7 @@ svg {
 
 .scenes__thumb {
   aspect-ratio: 3 / 4;
+  overflow: hidden;
 }
 
 /* ---------- P3 커스텀 ---------- */

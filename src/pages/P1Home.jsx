@@ -5,6 +5,7 @@ import Footer from '../components/Footer.jsx'
 import { ArrowRight } from '../components/Icons.jsx'
 import TextType from '../components/TextType.jsx'
 import heroPhoto from '../images/hero-direction-animal.jpg'
+import scenePhoto from '../images/scene-direction-animal.webp'
 import BrowseSlider from '../components/BrowseSlider.jsx'
 import PixelSnow from '../components/PixelSnow.jsx'
 import { useSwipe } from '../hooks.js'
@@ -17,7 +18,15 @@ const HERO_SPEED = 55
 const HERO_HIGHLIGHT = '#fffed3' // 형광펜 색
 const HERO_LINE_2_START = HERO_START + Array.from(HERO_LINE_1).length * HERO_SPEED + 500
 
-const SCENES = ['책상 위', '침대 머리맡', '선반 위', '창가', '소파 위', '선물 상자 속']
+// S1-4 사용 예시 장면 — photo 가 있으면 사진, 없으면 자리 표시. 사진이 생기면 photo 만 채우면 됨
+const SCENES = [
+  { name: '책상 위', photo: scenePhoto },
+  { name: '침대 머리맡', photo: null },
+  { name: '선반 위', photo: null },
+  { name: '창가', photo: null },
+  { name: '소파 위', photo: null },
+  { name: '선물 상자 속', photo: null },
+]
 
 export default function P1Home() {
   const [scene, setScene] = useState(0)
@@ -92,10 +101,12 @@ export default function P1Home() {
           <div className="scenes__main-wrap" {...sceneSwipe}>
             <Placeholder
               key={scene}
-              label={`사용 예시 사진 — ${SCENES[scene]}`}
+              label={`사용 예시 사진 — ${SCENES[scene].name}`}
               knit
               className="scenes__main fade-in"
-            />
+            >
+              {SCENES[scene].photo && <img className="scenes__photo" src={SCENES[scene].photo} alt="" />}
+            </Placeholder>
           </div>
           <div className="scenes__text">
             <h2 id="scenes-title" className="display-sub">
@@ -114,18 +125,22 @@ export default function P1Home() {
             <button
               type="button"
               className="scenes__next"
-              aria-label={`다음 장면 보기: ${SCENES[nextScene]}`}
+              aria-label={`다음 장면 보기: ${SCENES[nextScene].name}`}
               onClick={() => setScene(nextScene)}
             >
               <Placeholder
                 key={nextScene}
-                label={`다음 장면 — ${SCENES[nextScene]}`}
+                label={`다음 장면 — ${SCENES[nextScene].name}`}
                 tone="pink"
                 className="scenes__thumb fade-in"
-              />
+              >
+                {SCENES[nextScene].photo && (
+                  <img className="scenes__photo" src={SCENES[nextScene].photo} alt="" />
+                )}
+              </Placeholder>
             </button>
             <div className="dots" role="group" aria-label="사용 예시 장면">
-              {SCENES.map((name, i) => (
+              {SCENES.map(({ name }, i) => (
                 <button
                   key={name}
                   type="button"
