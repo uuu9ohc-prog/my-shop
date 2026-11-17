@@ -13,7 +13,8 @@ export default function P2Designs() {
 
       {/* S2-2 디자인 둘러보기 캐러셀 (B2-1 ~ B2-6) */}
       <section id="browse" aria-label="디자인 둘러보기">
-        <BrowseSlider />
+        {/* 가운데(3번째)에서 시작해 양옆을 채우고, 카드 간격을 넓혀 가로를 꽉 차게 (2026-11-17) */}
+        <BrowseSlider initialIndex={2} spacing={230} outerSpacing={170} />
       </section>
     </main>
   )

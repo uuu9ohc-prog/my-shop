@@ -35,7 +35,7 @@ export const BROWSE_ALBUMS = [
   return { id, cover, title: design?.name ?? id, artist: design ? design.parts.join(' · ') : '' }
 })
 
-export default function BrowseSlider({ title }) {
+export default function BrowseSlider({ title, ...railProps }) {
   const navigate = useNavigate()
   return (
     <>
@@ -48,6 +48,7 @@ export default function BrowseSlider({ title }) {
         playIcon={<LogoMark />}
         tuckedItem={(album) => <YarnBalls colors={YARN_COLORS[album.id] ?? ['#d8cfc4']} />}
         tuckedName="실타래"
+        {...railProps}
       />
     </>
   )

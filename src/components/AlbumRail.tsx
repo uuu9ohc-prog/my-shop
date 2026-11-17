@@ -35,6 +35,8 @@ export type AlbumRailProps = {
   cardSize?: number | string
   /** 가운데 카드와 첫 이웃 사이 간격(px). 그 바깥은 약 70/150 비율로 촘촘해짐 */
   spacing?: number
+  /** 첫 이웃 바깥 카드 사이 간격(px). 비우면 spacing × 70/150 */
+  outerSpacing?: number
   /** 옆 카드 최대 회전각(deg) */
   maxRotation?: number
   /** 가운데에서 이 칸 수를 넘는 카드는 숨김 (1.5칸 전부터 서서히 사라짐) */
@@ -292,6 +294,7 @@ export default function AlbumRail({
   albums,
   cardSize,
   spacing = 150,
+  outerSpacing,
   maxRotation = 65,
   visibleRange = 6,
   initialIndex = 0,
@@ -320,7 +323,7 @@ export default function AlbumRail({
   const stageFade = useMotionValue(1)
   const makeLayout = (): Layout => ({
     near: spacing * factor,
-    far: spacing * OUTER_SPACING_RATIO * factor,
+    far: (outerSpacing ?? spacing * OUTER_SPACING_RATIO) * factor,
     maxRotation,
     visibleRange,
   })
@@ -328,7 +331,7 @@ export default function AlbumRail({
   useEffect(() => {
     layout.set(makeLayout())
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [spacing, factor, maxRotation, visibleRange])
+  }, [spacing, outerSpacing, factor, maxRotation, visibleRange])
 
   // 진행 막대: 지금 몇 번째인지 (1번째 = 1/n, 마지막 = 가득). 드래그 중에도 연속으로 따라감
   const countRef = useRef(count)
