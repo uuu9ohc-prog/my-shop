@@ -1,9 +1,9 @@
 import {
-  useCallback,
   useEffect,
   useRef,
   useState,
   type CSSProperties,
+  type ReactNode,
   type KeyboardEvent as ReactKeyboardEvent,
   type PointerEvent as ReactPointerEvent,
 } from 'react'
@@ -43,6 +43,12 @@ export type AlbumRailProps = {
   onChange?: (index: number, album: Album) => void
   /** 가운데 카드를 누르거나 Enter를 누르면 호출 (예: 상세 페이지로 이동) */
   onSelect?: (album: Album, index: number) => void
+  /** 가운데 버튼 아이콘 (비우면 재생/일시정지 아이콘) */
+  playIcon?: ReactNode
+  /** 레코드판 대신 슬리브에서 빠져나올 것 (비우면 레코드판). 함수면 앨범마다 다르게 */
+  tuckedItem?: ReactNode | ((album: Album, index: number) => ReactNode)
+  /** 버튼 읽기용 이름 (예: '실타래' → '강아지 실타래 꺼내기') */
+  tuckedName?: string
   className?: string
   'aria-label'?: string
 }
@@ -57,7 +63,6 @@ const MAX_TILT = 12 // deg
 const TILT_FULL_VELOCITY = 1500 // px/s 에서 최대 기울기
 const MOMENTUM_TIME = 0.25 // s — 놓을 때 속도로 이동 거리 예측
 const RUBBER_BAND = 0.3
-const TICK_STEP = 17 // 눈금 1px + 간격 16px
 const MOBILE_QUERY = '(max-width: 640px)'
 const MOBILE_FACTOR = 0.7
 const SNAP_SPRING = { type: 'spring', stiffness: 260, damping: 30 } as const
@@ -183,6 +188,11 @@ function useExtractedAccents(albums: Album[]) {
   return accents
 }
 
+type HoverProps = {
+  onPointerEnter: (e: ReactPointerEvent<HTMLElement>) => void
+  onPointerLeave: (e: ReactPointerEvent<HTMLElement>) => void
+}
+
 type RailCardProps = {
   album: Album
   index: number
@@ -191,10 +201,23 @@ type RailCardProps = {
   layout: MotionValue<Layout>
   isActive: boolean
   recordOut: boolean
+  tuckedItem?: ReactNode
+  hoverProps?: HoverProps
   total: number
 }
 
-function RailCard({ album, index, position, tilt, layout, isActive, recordOut, total }: RailCardProps) {
+function RailCard({
+  album,
+  index,
+  position,
+  tilt,
+  layout,
+  isActive,
+  recordOut,
+  tuckedItem,
+  hoverProps,
+  total,
+}: RailCardProps) {
   // 모든 값은 position(연속 실수) 하나에서 계산 — 프레임마다 React 렌더 없음
   // useTransform(() => …) 은 안에서 .get() 한 motion value를 자동으로 따라감
   const transform = useTransform(() => {
@@ -227,9 +250,13 @@ function RailCard({ album, index, position, tilt, layout, isActive, recordOut, t
       aria-label={`${index + 1} / ${total}: ${album.title}`}
       aria-hidden={!isActive}
       style={{ transform, zIndex, opacity, visibility }}
+      {...hoverProps}
     >
-      <div className={`album-rail__record${recordOut ? ' is-out' : ''}`} aria-hidden="true">
-        <div className="album-rail__record-disc" />
+      <div
+        className={`album-rail__record${tuckedItem ? ' album-rail__record--custom' : ''}${recordOut ? ' is-out' : ''}`}
+        aria-hidden="true"
+      >
+        {tuckedItem ? <div className="album-rail__record-item">{tuckedItem}</div> : <div className="album-rail__record-disc" />}
       </div>
       <div className="album-rail__sleeve">
         <img src={album.cover} alt={`${album.title} 커버`} draggable={false} />
@@ -240,12 +267,12 @@ function RailCard({ album, index, position, tilt, layout, isActive, recordOut, t
 }
 
 const ChevronLeft = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+  <svg width="30" height="30" viewBox="0 0 24 24" fill="none" aria-hidden="true">
     <path d="M15 5l-7 7 7 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
   </svg>
 )
 const ChevronRight = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+  <svg width="30" height="30" viewBox="0 0 24 24" fill="none" aria-hidden="true">
     <path d="M9 5l7 7-7 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
   </svg>
 )
@@ -270,6 +297,9 @@ export default function AlbumRail({
   initialIndex = 0,
   onChange,
   onSelect,
+  playIcon,
+  tuckedItem,
+  tuckedName = '레코드',
   className,
   'aria-label': ariaLabel = '앨범 캐러셀',
 }: AlbumRailProps) {
@@ -300,7 +330,10 @@ export default function AlbumRail({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [spacing, factor, maxRotation, visibleRange])
 
-  const ticksX = useTransform(position, (p) => -p * TICK_STEP)
+  // 진행 막대: 지금 몇 번째인지 (1번째 = 1/n, 마지막 = 가득). 드래그 중에도 연속으로 따라감
+  const countRef = useRef(count)
+  countRef.current = count
+  const progress = useTransform(position, (p: number) => clamp((p + 1) / Math.max(1, countRef.current), 0, 1))
 
   const [active, setActive] = useState(startIndex)
   const [playing, setPlaying] = useState(false)
@@ -323,6 +356,38 @@ export default function AlbumRail({
   const setPlay = (value: boolean) => {
     playingRef.current = value
     setPlaying(value)
+  }
+
+  // 마우스를 가운데 카드나 버튼에 올리면 잠깐 꺼내 보여 주기 (누르면 고정)
+  const [peek, setPeekState] = useState(false)
+  const peekRef = useRef(false)
+  const peekTimer = useRef<number | undefined>(undefined)
+  const peekBlocked = useRef(false) // 버튼으로 막 넣었을 때는 마우스가 떠날 때까지 다시 안 나옴
+  const clearPeek = () => {
+    window.clearTimeout(peekTimer.current)
+    peekRef.current = false
+    setPeekState(false)
+  }
+  const setPeek = (value: boolean) => {
+    window.clearTimeout(peekTimer.current)
+    if (value) {
+      if (peekBlocked.current || drag.current) return
+      peekRef.current = true
+      setPeekState(true)
+    } else {
+      // 카드 → 버튼처럼 옮겨 갈 때 깜빡이지 않게 살짝 기다림
+      peekTimer.current = window.setTimeout(clearPeek, 120)
+    }
+  }
+  const hoverProps: HoverProps = {
+    onPointerEnter: (e) => {
+      if (e.pointerType === 'mouse') setPeek(true)
+    },
+    onPointerLeave: (e) => {
+      if (e.pointerType !== 'mouse') return
+      peekBlocked.current = false
+      setPeek(false)
+    },
   }
 
   // 인덱스가 바뀔 때만 React 렌더
@@ -355,6 +420,7 @@ export default function AlbumRail({
     () => () => {
       animRef.current?.stop()
       window.clearTimeout(tuckTimer.current)
+      window.clearTimeout(peekTimer.current)
     },
     [],
   )
@@ -382,8 +448,9 @@ export default function AlbumRail({
     window.clearTimeout(tuckTimer.current)
     targetRef.current = target
     // 레코드가 나와 있으면 먼저 집어넣고 이동
-    if (playingRef.current && target !== Math.round(position.get())) {
+    if ((playingRef.current || peekRef.current) && target !== Math.round(position.get())) {
       setPlay(false)
+      clearPeek()
       if (!reduced) {
         tuckTimer.current = window.setTimeout(() => settle(target), RECORD_TUCK_MS)
         return
@@ -463,6 +530,7 @@ export default function AlbumRail({
       d.startX = e.clientX // 문턱만큼 튀지 않게 여기서부터 계산
       setDragging(true)
       if (playingRef.current) setPlay(false)
+      clearPeek()
     }
     position.set(rubberBand(d.startPos - (e.clientX - d.startX) / pxPerItem, maxIndex))
     d.samples.push({ t: e.timeStamp, x: e.clientX })
@@ -513,11 +581,15 @@ export default function AlbumRail({
     }
   }
 
-  const togglePlay = useCallback(() => {
-    const next = !playingRef.current
-    playingRef.current = next
-    setPlaying(next)
-  }, [])
+  const togglePlay = () => {
+    if (playingRef.current) {
+      setPlay(false)
+      clearPeek()
+      peekBlocked.current = true
+    } else {
+      setPlay(true)
+    }
+  }
 
   if (count === 0) return null
 
@@ -560,7 +632,9 @@ export default function AlbumRail({
             tilt={tilt}
             layout={layout}
             isActive={i === active}
-            recordOut={i === active && playing}
+            recordOut={i === active && (playing || peek)}
+            hoverProps={i === active ? hoverProps : undefined}
+            tuckedItem={typeof tuckedItem === 'function' ? tuckedItem(album, i) : tuckedItem}
           />
         ))}
       </motion.div>
@@ -597,21 +671,18 @@ export default function AlbumRail({
         </button>
 
         <div className="album-rail__ruler">
-          <div className="album-rail__ticks" aria-hidden="true">
-            <motion.div className="album-rail__ticks-track" style={{ x: ticksX }}>
-              {albums.map((album) => (
-                <span key={album.id} className="album-rail__tick" />
-              ))}
-            </motion.div>
+          <div className="album-rail__progress" aria-hidden="true">
+            <motion.div className="album-rail__progress-fill" style={{ scaleX: progress }} />
           </div>
           <button
             type="button"
             className="album-rail__play"
-            aria-label={playing ? `${current.title} 레코드 넣기` : `${current.title} 레코드 꺼내기`}
+            aria-label={`${current.title} ${tuckedName} ${playing ? '넣기' : '꺼내기'}`}
             aria-pressed={playing}
             onClick={togglePlay}
+            {...hoverProps}
           >
-            {playing ? <PauseIcon /> : <PlayIcon />}
+            <span className="album-rail__play-face">{playIcon ?? (playing ? <PauseIcon /> : <PlayIcon />)}</span>
           </button>
         </div>
 

@@ -603,7 +603,8 @@ svg {
   --bg: transparent;
   --text: var(--ink);
   --text-muted: var(--ink-muted);
-  --tick-color: var(--line-dashed);
+  --progress-fill: #d63a2a; /* 지나온 구간 */
+  --progress-track: #f0d6cd; /* 남은 구간 */
   --shade: var(--surface);
   --card-shadow: 0 24px 48px rgba(46, 42, 38, 0.18);
   --accent: var(--ink-faint);
@@ -613,6 +614,24 @@ svg {
   box-shadow: none;
   outline: 2px solid var(--red-500);
   outline-offset: 3px;
+}
+
+.browse-rail .album-rail__arrow:focus-visible,
+.browse-rail .album-rail__play:focus-visible {
+  outline-color: var(--red-500);
+}
+
+.browse-rail .album-rail__play .logo__mark {
+  width: 24px;
+  height: 24px;
+  color: #fff;
+  opacity: 1;
+}
+
+/* 로고 안 가로줄은 버튼 바탕색으로 — 흰 공에 줄이 파인 모양 */
+.browse-rail .album-rail__play .logo__mark path:first-of-type {
+  stroke: color-mix(in srgb, var(--accent) 70%, #000);
+  transition: stroke 300ms ease;
 }
 
 .browse-rail .album-rail__title {

@@ -148,7 +148,7 @@
 - 털실 일러스트: `src/components/YarnArt.jsx` — P0 쌓인 털실 뭉치, P4·P7 털실이 풀려 나오는 뭉치(고른 전체 바탕 색) (출처: 답변2)
 - 사진: `src/assets/woolen-yarn.jpg`(원본 `assets/woolen_yarn.jpg`, 정사각형으로 잘라 워터마크가 보이지 않음) → P1 S1-3 '03 털실 고르기' (출처: 답변2)
 - P1 이미지 채움 (출처: 답변2)
-  - S1-1 대표 이미지: Figma 노드 84:12 내보내기 이미지 `src/images/hero-main.png`(715×715, 파스텔 털실 뭉치·뜨개바늘·레이스 도일리)를 뜨개 모양 틀에 꽉 채움 (출처: 2026-11-16 답변, Figma https://www.figma.com/design/glKnPfdLDyPU6fjBcxhi4d?node-id=84-12)
+  - S1-1 대표 이미지: Figma 노드 84:12 내보내기 이미지 `src/images/hero-main.png`(715×715, 파스텔 털실 뭉치·뜨개바늘·레이스 도일리)를 둥근 사각 틀(모서리 28, 옆 글 칸과 같음)에 꽉 채움 — 뜨개 모양 틀에서 변경 (2026-11-17 답변) (출처: 2026-11-16 답변, Figma https://www.figma.com/design/glKnPfdLDyPU6fjBcxhi4d?node-id=84-12)
   - S1-3 단계 4칸: 01 동물 셋 / 02 토끼 + 색 견본 / 03 털실 사진 / 04 크기별 토끼 셋
   - S1-2: 여섯 친구 사진 `src/images/browse-dolls.png` (Figma 96:43) / P2 카드: 디자인별 인형 일러스트
   - S1-4 사용 예시 사진 6장: 실제 사진 없음 → 자리 표시 유지 [미정]
