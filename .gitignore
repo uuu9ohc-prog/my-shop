@@ -2,3 +2,7 @@
 /PROJECT_CONTEXT_TEMPLATE.md
 node_modules
 dist
+
+# 로컬 비밀 값 (React Bits 라이선스 키 등)
+.env
+.env*.local
