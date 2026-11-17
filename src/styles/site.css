@@ -534,6 +534,9 @@ svg {
   background: var(--pink-200);
   /* 글자·버튼 크기를 이 상자 너비 대비 비율로 */
   container-type: inline-size;
+  /* 들어오자마자 가운데 한 점(0)에서 제 크기로 커짐 — 튕김 없이 부드럽게 멈춤 (2026-11-17 답변). 메인 이미지는 그대로 */
+  transform-origin: center;
+  animation: hero-text-grow 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
   /* --hero-u = 여백을 포함한 상자 전체 너비의 1% (100cqw는 여백을 뺀 안쪽 너비)
      × 0.9: 글씨·버튼을 Figma 비율보다 10% 작게 — 히어로 높이 약 480px (2026-11-17 답변) */
   --hero-scale: 0.9;
@@ -1808,5 +1811,21 @@ svg {
 @media (prefers-reduced-motion: reduce) {
   .step-progress__cell::after {
     transition: none;
+  }
+}
+
+/* 메인 배너(히어로 글 칸) 등장 — 가운데에서 0 → 제 크기 */
+@keyframes hero-text-grow {
+  from {
+    transform: scale(0);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero__text {
+    animation: none;
   }
 }
