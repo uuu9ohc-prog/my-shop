@@ -1644,19 +1644,48 @@ svg {
 }
 
 /* 섹션 스크롤 등장 효과 (Scroll Reveal, 2026-11-17) — 아래에서 살짝 떠오르며 나타남, 한 번만
-   .reveal-ready 는 JS(useScrollReveal)가 붙임 → JS가 없으면 숨기지 않음. 동작 줄이기 설정이면 JS가 바로 보여 줌 */
+   .reveal-ready 는 P1 <main>에 처음부터 붙어 있음 → 첫 화면부터 숨긴 상태, 화면에 들어오면 is-revealed 로 나타남 */
 .reveal-ready [data-reveal] {
   opacity: 0;
-  transform: translateY(40px);
+  transform: translateY(160px);
   transition:
-    opacity 0.8s ease,
-    transform 0.9s cubic-bezier(0.2, 0.7, 0.2, 1);
-  transition-delay: calc(var(--reveal-order, 0) * 150ms);
+    opacity 1.4s ease,
+    transform 2s cubic-bezier(0.16, 0.84, 0.3, 1);
+  transition-delay: calc(var(--reveal-order, 0) * 350ms);
 }
 
 .reveal-ready [data-reveal].is-revealed {
   opacity: 1;
   transform: none;
+}
+
+/* 사진은 틀 안에서 아래에서 위로 떠오르며 자리 잡음 + 살짝 줌아웃 (2026-11-17 답변)
+   translate·scale 은 호버 확대(transform)와 따로 움직여 서로 겹치지 않음. 틀(overflow·mask) 밖은 가려짐 */
+.reveal-ready [data-reveal] .scenes__photo {
+  translate: 0 100%;
+  scale: 1.2;
+  transition:
+    translate 2.2s cubic-bezier(0.16, 0.84, 0.3, 1),
+    scale 2.6s cubic-bezier(0.16, 0.84, 0.3, 1),
+    transform 0.6s ease;
+  transition-delay: calc(var(--reveal-order, 0) * 350ms + 250ms), calc(var(--reveal-order, 0) * 350ms + 250ms), 0s;
+}
+
+.reveal-ready [data-reveal].is-revealed .scenes__photo {
+  translate: 0 0;
+  scale: 1;
+}
+
+/* 동작 줄이기 설정: 숨기지 않고 처음부터 보여 줌 */
+@media (prefers-reduced-motion: reduce) {
+  .reveal-ready [data-reveal],
+  .reveal-ready [data-reveal] .scenes__photo {
+    opacity: 1;
+    transform: none;
+    translate: none;
+    scale: none;
+    transition: none;
+  }
 }
 
 /* P3 고르기 진행 막대 (StepProgress, 2026-11-17) — 고를 때마다 칸이 채워짐 */

@@ -65,15 +65,18 @@ export default function P1Home() {
   }, [])
 
   // 섹션 스크롤 등장 효과 (Scroll Reveal, 2026-11-17) — 순서는 --reveal-order 로 차례차례
+  // 메인 배너(히어로)는 효과 없이 처음부터 제자리 (2026-11-17 답변)
   const mainRef = useRef(null)
-  useScrollReveal(mainRef)
+  // S1-4 두 사진·글은 스크롤이 아니라 페이지에 들어오자마자 차례로 올라옴 (2026-11-17 답변)
+  useScrollReveal(mainRef, { trigger: 'load' })
 
   return (
     <>
-      <main ref={mainRef}>
+      {/* reveal-ready 를 처음부터 붙여 둠 → 첫 화면부터 숨긴 상태로 시작 (보였다가 사라지는 깜빡임 없음) */}
+      <main ref={mainRef} className="reveal-ready">
         {/* S1-1 브랜드 인상 영역 (2분할) */}
         <section className="section container hero" aria-labelledby="hero-title">
-          <div className="hero__text" data-reveal>
+          <div className="hero__text">
             <h1 id="hero-title" className="display-hero">
               한 땀 한 땀,
               <br />
@@ -105,8 +108,6 @@ export default function P1Home() {
           <Placeholder
             label="파스텔 털실 뭉치와 뜨개바늘, 레이스 도일리 대표 이미지"
             className="hero__image"
-            data-reveal
-            style={{ '--reveal-order': 1 }}
           >
             <img className="hero__photo" src={heroPhoto} alt="" />
             <PixelSnow className="hero__snow" variant="round" density={0.35} />
