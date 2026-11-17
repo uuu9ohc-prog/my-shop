@@ -90,10 +90,46 @@ const maskPart = (v) => (v === 0 || v >= 250 ? -1 : Math.round(v / 60) - 1)
 const luma = (r, g, b) => (0.299 * r + 0.587 * g + 0.114 * b) / 255
 const CONTRAST = 1.15 // 질감(밝기 차이)을 얼마나 살릴지
 
-export default function PhotoDoll({ design, colors, className = '' }) {
+// Pixel Reveal: 처음 그릴 때 아무것도 없다가 위에서부터 픽셀 칸이 하나씩 생기며 나타남 (P5, 2026-11-17)
+const REVEAL_MS = 1600 // 전체 시간
+const CELL = 14 // 픽셀 칸 크기(원본 사진 px)
+
+function pixelReveal(ctx, image, onDone) {
+  const cols = Math.ceil(image.width / CELL)
+  const rows = Math.ceil(image.height / CELL)
+  // 칸마다 나타나는 시각: 위쪽 줄일수록 먼저(75%) + 같은 줄 안에서는 무작위(25%)
+  const cells = []
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      cells.push({ x: c * CELL, y: r * CELL, at: (r / rows) * 0.75 + Math.random() * 0.25 })
+    }
+  }
+  cells.sort((a, b) => a.at - b.at)
+  let next = 0
+  let raf = 0
+  const start = performance.now()
+  const step = (now) => {
+    const t = Math.min(1, (now - start) / REVEAL_MS)
+    while (next < cells.length && cells[next].at <= t) {
+      const { x, y } = cells[next]
+      ctx.putImageData(image, 0, 0, x, y, CELL, CELL)
+      next++
+    }
+    if (t < 1) raf = requestAnimationFrame(step)
+    else {
+      ctx.putImageData(image, 0, 0)
+      onDone?.()
+    }
+  }
+  raf = requestAnimationFrame(step)
+  return () => cancelAnimationFrame(raf)
+}
+
+export default function PhotoDoll({ design, colors, reveal = false, className = '' }) {
   const canvasRef = useRef(null)
   const dataRef = useRef(null) // { base, mask, refs }
   const [ready, setReady] = useState(false)
+  const revealedRef = useRef(false) // Pixel Reveal 은 처음 한 번만
   const src = PHOTO_DOLLS[design.id]
 
   // 사진·마스크 한 번 읽기 + 부위별 평균 밝기 계산
@@ -151,7 +187,20 @@ export default function PhotoDoll({ design, colors, className = '' }) {
     }
     canvas.width = base.width
     canvas.height = base.height
-    canvas.getContext('2d').putImageData(out, 0, 0)
+    const ctx = canvas.getContext('2d')
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    if (reveal && !revealedRef.current && !reduce) {
+      revealedRef.current = true
+      let done = false
+      const cancel = pixelReveal(ctx, out, () => (done = true))
+      // 중간에 정리되면(개발 모드 이중 실행 등) 다음에 다시 처음부터 나타나게
+      return () => {
+        cancel()
+        if (!done) revealedRef.current = false
+      }
+    }
+    ctx.putImageData(out, 0, 0)
+    return undefined
   }, [ready, key]) // eslint-disable-line react-hooks/exhaustive-deps
 
   return <canvas ref={canvasRef} className={`photo-doll ${className}`} aria-hidden="true" />

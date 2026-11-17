@@ -6,11 +6,12 @@ import { getColor } from '../data/options.js'
 // yarnId 를 주면 털실 질감까지 반영 (P5·P6·OV-01 최종 이미지)
 // showParts: 부위별 고른 색 목록을 함께 보여 줌 (P3 미리보기)
 // photo: 사진 인형이 있는 디자인이면 일러스트 대신 사진에서 색만 바꿔 보여 줌 (P3 S3-2)
-export default function DollPreview({ design, colors, yarnId, label, showParts = false, photo = false, className = '' }) {
+// photoReveal: 사진 인형이 위에서부터 픽셀 칸으로 나타남 (P5 최종 이미지)
+export default function DollPreview({ design, colors, yarnId, label, showParts = false, photo = false, photoReveal = false, className = '' }) {
   return (
     <figure className={`doll doll--${design.tone} ${className}`} role="img" aria-label={label}>
       {photo && PHOTO_DOLLS[design.id] ? (
-        <PhotoDoll design={design} colors={colors} />
+        <PhotoDoll design={design} colors={colors} reveal={photoReveal} />
       ) : (
         <DollArt design={design} colors={colors} yarnId={yarnId} />
       )}

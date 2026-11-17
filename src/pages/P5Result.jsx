@@ -28,6 +28,7 @@ export default function P5Result() {
           label={imageLabel}
           className="doll--large"
           photo
+          photoReveal
         />
       </section>
 
