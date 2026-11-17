@@ -688,36 +688,6 @@ svg {
   aspect-ratio: 4 / 5;
 }
 
-/* ---------- P1 S1-3 만드는 순서 ---------- */
-.steps {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: var(--space-5);
-  margin-top: var(--space-6);
-}
-
-.step__image {
-  aspect-ratio: 1 / 1;
-  border-radius: var(--radius-md);
-}
-
-.step__title {
-  margin: var(--space-5) 0 var(--space-2);
-  font-size: 18px;
-  font-weight: 600;
-  line-height: 1.4;
-}
-
-.step__no {
-  font-weight: 400;
-  color: var(--ink-muted);
-  margin-right: var(--space-1);
-}
-
-.step__text {
-  color: var(--ink-soft);
-}
-
 /* ---------- P1 S1-4 사용 예시 (3분할) ---------- */
 .scenes {
   display: grid;
@@ -1006,6 +976,12 @@ svg {
   padding: var(--space-4);
 }
 
+/* S3-2 미리보기 — 디자인 색과 상관없이 카드 배경을 모두 흰색으로 */
+.custom__preview .doll,
+.custom__preview .doll__parts {
+  background: #fff;
+}
+
 /* 카드·단계 이미지 안의 그림 */
 .placeholder > .doll-art {
   width: 72%;
@@ -1040,70 +1016,6 @@ svg {
   width: 44%;
   position: relative;
   z-index: 1;
-}
-
-.step__image {
-  overflow: hidden;
-}
-
-.step-art {
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  width: 100%;
-  padding: 0 var(--space-4);
-}
-
-.step-art .doll-art {
-  height: auto;
-}
-
-.step-art--trio .doll-art {
-  width: 32%;
-}
-
-.step-art--colors {
-  flex-direction: column;
-  align-items: center;
-  gap: var(--space-3);
-}
-
-.step-art--colors .doll-art {
-  width: 52%;
-}
-
-.step-art__swatches {
-  display: flex;
-  gap: var(--space-1);
-}
-
-.step-art__swatches .swatch {
-  width: 18px;
-  height: 18px;
-}
-
-.step-art--sizes {
-  gap: var(--space-2);
-}
-
-.step-art--sizes .size-48 {
-  width: 18%;
-}
-
-.step-art--sizes .size-68 {
-  width: 26%;
-}
-
-.step-art--sizes .size-88 {
-  width: 34%;
-}
-
-.step-art__photo {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
 }
 
 /* 털실 일러스트 */
@@ -1415,8 +1327,7 @@ svg {
     display: none;
   }
 
-  .design-grid,
-  .steps {
+  .design-grid {
     grid-template-columns: repeat(2, 1fr);
   }
 

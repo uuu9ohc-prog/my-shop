@@ -2,60 +2,12 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import Placeholder from '../components/Placeholder.jsx'
 import Footer from '../components/Footer.jsx'
-import DollArt from '../components/DollArt.jsx'
 import { ArrowRight } from '../components/Icons.jsx'
 import TextType from '../components/TextType.jsx'
-import { getDesign } from '../data/designs.js'
-import { COLORS } from '../data/options.js'
-import yarnPhoto from '../assets/woolen-yarn.jpg'
 import heroPhoto from '../images/hero-direction-animal.jpg'
 import BrowseSlider from '../components/BrowseSlider.jsx'
 import PixelSnow from '../components/PixelSnow.jsx'
 import { useSwipe } from '../hooks.js'
-
-const STEPS = [
-  { no: '01', title: '디자인 고르기', text: '여섯 동물 중 하나를 골라요' },
-  { no: '02', title: '색상 고르기', text: '세 군데 색을 고르면 바로 보여요' },
-  { no: '03', title: '털실 고르기', text: '보송한 느낌부터 도톰한 느낌까지' },
-  { no: '04', title: '크기 고르기', text: '10cm · 20cm · 30cm 중에서 골라요' },
-]
-
-const rabbit = getDesign('rabbit')
-
-// S1-3 단계별 그림 (4단계 에셋: SVG 일러스트 + 털실 사진)
-function StepArt({ no }) {
-  if (no === '01') {
-    return (
-      <div className="step-art step-art--trio">
-        {['cat', 'rabbit', 'bear'].map((id) => (
-          <DollArt key={id} design={getDesign(id)} />
-        ))}
-      </div>
-    )
-  }
-  if (no === '02') {
-    return (
-      <div className="step-art step-art--colors">
-        <DollArt design={rabbit} />
-        <span className="step-art__swatches">
-          {COLORS.slice(0, 5).map((c) => (
-            <span key={c.id} className="swatch" style={{ background: c.hex }} />
-          ))}
-        </span>
-      </div>
-    )
-  }
-  if (no === '03') {
-    return <img className="step-art__photo" src={yarnPhoto} alt="" />
-  }
-  return (
-    <div className="step-art step-art--sizes">
-      {[48, 68, 88].map((h) => (
-        <DollArt key={h} design={rabbit} className={`size-${h}`} />
-      ))}
-    </div>
-  )
-}
 
 // S1-1 소개 문구 타이핑 효과: 첫 문단을 다 친 뒤 잠깐 쉬고 두 번째 문단을 이어서 침
 const HERO_LINE_1 = '디자인을 고르고 색과 털실, 크기를 정하면\n손뜬 스튜디오가 정성껏 떠서 보내 드려요.'
@@ -133,32 +85,6 @@ export default function P1Home() {
               </h2>
             }
           />
-        </section>
-
-        {/* S1-3 만드는 순서 안내 */}
-        <section id="steps" className="section container" aria-labelledby="steps-title">
-          <h2 id="steps-title" className="section-title section-title--center">
-            <span className="spark" aria-hidden="true">
-              ✦
-            </span>
-            이렇게 만들어져요
-            <span className="spark" aria-hidden="true">
-              ✦
-            </span>
-          </h2>
-          <ol className="steps">
-            {STEPS.map((s) => (
-              <li key={s.no} className="step">
-                <Placeholder label={`${s.title} 이미지`} className="step__image">
-                  <StepArt no={s.no} />
-                </Placeholder>
-                <p className="step__title">
-                  <span className="step__no">{s.no}</span> {s.title}
-                </p>
-                <p className="step__text">{s.text}</p>
-              </li>
-            ))}
-          </ol>
         </section>
 
         {/* S1-4 인형 인테리어나 실 사용예 (3분할) */}

@@ -12,7 +12,6 @@ const PLAIN_ICONS = [
 // 메뉴 창 — 첫 화면(P1)의 각 구역으로 이동 (2026-11-16 답변)
 const MENU_LINKS = [
   { to: '/home#browse', label: '디자인 둘러보기' }, // S1-2
-  { to: '/home#steps', label: '이렇게 만들어져요' }, // S1-3
   { to: '/home#reviews', label: '사진 후기' }, // S1-4 사용 예시 사진
 ]
 
