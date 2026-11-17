@@ -11,8 +11,8 @@ const PLAIN_ICONS = [
 
 // 메뉴 창 — 첫 화면(P1)의 각 구역으로 이동 (2026-11-16 답변)
 const MENU_LINKS = [
-  { to: '/home#browse', label: '디자인 둘러보기' }, // S1-2
-  { to: '/home#reviews', label: '사진 후기' }, // S1-4 사용 예시 사진
+  { to: '/home#reviews', label: '사진 후기' }, // S1-4 사용 예시 사진 (화면 순서: 히어로 다음, 2026-11-17)
+  { to: '/designs', label: '디자인 둘러보기' }, // P2 (캐러셀을 P1 S1-2에서 P2로 옮김, 2026-11-17)
 ]
 
 // 공통 GNB 헤더 — P1, P2, P3, P5, P6, P7

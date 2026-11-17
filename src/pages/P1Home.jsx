@@ -1,15 +1,14 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import Placeholder from '../components/Placeholder.jsx'
 import Footer from '../components/Footer.jsx'
-import { ArrowRight } from '../components/Icons.jsx'
+import { ArrowLeft, ArrowRight } from '../components/Icons.jsx'
 import TextType from '../components/TextType.jsx'
 import heroPhoto from '../images/hero-direction-animal.jpg'
 import scenePicnic from '../images/scene-picnic.webp'
 import sceneWindow from '../images/scene-window.jpg'
 import sceneBed from '../images/scene-bed.jpg'
 import sceneBeach from '../images/scene-beach.jpg'
-import BrowseSlider from '../components/BrowseSlider.jsx'
 import PixelSnow from '../components/PixelSnow.jsx'
 import { useSwipe } from '../hooks.js'
 
@@ -35,6 +34,35 @@ export default function P1Home() {
   const nextScene = (scene + 1) % SCENES.length
   const prevScene = (scene - 1 + SCENES.length) % SCENES.length
   const sceneSwipe = useSwipe({ onPrev: () => setScene(prevScene), onNext: () => setScene(nextScene) })
+
+  // S1-4 키보드 ←/→ 로 장면 넘기기 — 이 구역이 화면에 절반 이상 보일 때만.
+  // 글 입력 중이거나 캐러셀(.album-rail)에 포커스가 있으면 그쪽 동작을 따름
+  const scenesRef = useRef(null)
+  const scenesVisible = useRef(false)
+  useEffect(() => {
+    const el = scenesRef.current
+    if (!el) return undefined
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        scenesVisible.current = entry.isIntersecting
+      },
+      { threshold: 0.5 },
+    )
+    io.observe(el)
+    const onKey = (e) => {
+      if (!scenesVisible.current || e.altKey || e.ctrlKey || e.metaKey) return
+      if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return
+      const t = e.target
+      if (t instanceof Element && t.closest('input, textarea, select, [contenteditable="true"], .album-rail')) return
+      e.preventDefault()
+      setScene((i) => (e.key === 'ArrowRight' ? (i + 1) % SCENES.length : (i - 1 + SCENES.length) % SCENES.length))
+    }
+    window.addEventListener('keydown', onKey)
+    return () => {
+      io.disconnect()
+      window.removeEventListener('keydown', onKey)
+    }
+  }, [])
 
   return (
     <>
@@ -79,26 +107,8 @@ export default function P1Home() {
           </Placeholder>
         </section>
 
-        {/* S1-2 디자인 둘러보기 */}
-        <section id="browse" className="section container" aria-labelledby="browse-title">
-          {/* S1-2 디자인 둘러보기 — 여섯 친구 사진 가로 슬라이드, 누르면 그 디자인으로 꾸미기 (2026-11-16 답변) */}
-          <BrowseSlider
-            title={
-              <h2 id="browse-title" className="section-title">
-                <span className="spark" aria-hidden="true">
-                  ✦
-                </span>
-                디자인 둘러보기
-                <span className="spark" aria-hidden="true">
-                  ✦
-                </span>
-              </h2>
-            }
-          />
-        </section>
-
         {/* S1-4 인형 인테리어나 실 사용예 (3분할) */}
-        <section id="reviews" className="section container scenes" aria-labelledby="scenes-title">
+        <section ref={scenesRef} id="reviews" className="section container scenes" aria-labelledby="scenes-title">
           <div className="scenes__main-wrap" {...sceneSwipe}>
             <Placeholder
               key={scene}
@@ -108,6 +118,22 @@ export default function P1Home() {
             >
               {SCENES[scene].photo && <img className="scenes__photo" src={SCENES[scene].photo} alt="" />}
             </Placeholder>
+            <button
+              type="button"
+              className="scenes__arrow scenes__arrow--prev"
+              aria-label={`이전 장면 보기: ${SCENES[prevScene].name}`}
+              onClick={() => setScene(prevScene)}
+            >
+              <ArrowLeft />
+            </button>
+            <button
+              type="button"
+              className="scenes__arrow scenes__arrow--next"
+              aria-label={`다음 장면 보기: ${SCENES[nextScene].name}`}
+              onClick={() => setScene(nextScene)}
+            >
+              <ArrowRight />
+            </button>
           </div>
           <div className="scenes__text">
             <h2 id="scenes-title" className="display-sub">

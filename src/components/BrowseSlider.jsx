@@ -39,7 +39,7 @@ export default function BrowseSlider({ title }) {
   const navigate = useNavigate()
   return (
     <>
-      <div className="section__head">{title}</div>
+      {title && <div className="section__head">{title}</div>}
       <AlbumRail
         className="browse-rail"
         albums={BROWSE_ALBUMS}
