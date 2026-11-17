@@ -1138,7 +1138,7 @@ svg {
 }
 
 .doll--large {
-  padding: var(--space-8) var(--space-6);
+  padding: 64px 38px; /* 80·48 → 80% */
 }
 
 .doll--small {
@@ -1279,7 +1279,7 @@ svg {
 /* P5 — 최종 이미지는 크게 단독으로, 주변을 비움 */
 .result__image {
   width: 100%;
-  max-width: 760px;
+  max-width: 608px; /* 760 → 80% (2026-11-17 답변: 상자·사진·여백을 같은 비율로 줄임) */
   margin: var(--space-7) auto var(--space-5);
 }
 
@@ -1412,7 +1412,7 @@ svg {
 
 /* 사진 인형 크기 — P5 크게, OV-01 미리보기 작게 */
 .doll--large .photo-doll {
-  max-width: 440px;
+  max-width: 352px; /* 440 → 80% */
 }
 
 .overlay__preview .photo-doll {
