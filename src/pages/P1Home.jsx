@@ -4,6 +4,7 @@ import Placeholder from '../components/Placeholder.jsx'
 import Footer from '../components/Footer.jsx'
 import { ArrowLeft, ArrowRight } from '../components/Icons.jsx'
 import TextType from '../components/TextType.jsx'
+import StarBorder from '../components/StarBorder.jsx'
 import heroPhoto from '../images/hero-direction-animal.jpg'
 import scenePicnic from '../images/scene-picnic.webp'
 import sceneWindow from '../images/scene-window.jpg'
@@ -97,13 +98,33 @@ export default function P1Home() {
               highlights={['하나뿐인 인형']}
               highlightColor={HERO_HIGHLIGHT}
             />
-            {/* B1-1 핵심 행동 → P2 */}
-            <Link to="/designs" className="btn btn--primary">
+            {/* B1-1 핵심 행동 → P2 — 테두리를 따라 별빛이 도는 StarBorder (React Bits, 2026-11-17)
+                마우스를 올리면 한 바퀴 빠르게 돌고(lap), 누르면 빛이 퍼짐(clickPulse). 버튼 모양은 기존 빨간 알약 그대로 */}
+            <StarBorder
+              as={Link}
+              to="/designs"
+              className="btn btn--primary"
+              color="#ffffff"
+              trailColor="#ffffff"
+              duration={4}
+              direction="clockwise"
+              stars={1}
+              trailLength={0.3}
+              thickness={1}
+              radius={999}
+              glow={0.6}
+              hover="lap"
+              sparkle={false}
+              clickPulse
+              theme="dark"
+              backgroundColor="var(--red-500)"
+              textColor="#fff"
+            >
               나만의 인형 만들기
               <span className="btn__arrow">
                 <ArrowRight />
               </span>
-            </Link>
+            </StarBorder>
           </div>
           <Placeholder
             label="파스텔 털실 뭉치와 뜨개바늘, 레이스 도일리 대표 이미지"
