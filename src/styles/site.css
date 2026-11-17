@@ -442,13 +442,12 @@ svg {
   background: var(--peach-200);
 }
 
-/* 뜨개 모양 틀 (KnitFrame) — 가장자리가 털실 뭉치처럼 몽글몽글 */
-/* 뜨개 모양 틀 — 가장자리 원 4개씩, 안쪽 사각을 넓혀 원 사이 홈을 얕게 (원이 덜 튀어나옴, 2026-11-17) */
+/* 뜨개 모양 틀 — Figma 132:16: 지름 338 원 12개를 크게 겹쳐 얕은 구름 모양 (1016×879, 2026-11-17) */
 .placeholder--knit {
   border-radius: 0;
   background: var(--peach-200);
-  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 400' preserveAspectRatio='none'%3E%3Crect x='24' y='24' width='352' height='352'/%3E%3Cg%3E%3Cellipse cx='50' cy='50' rx='50' ry='50'/%3E%3Cellipse cx='150' cy='50' rx='50' ry='50'/%3E%3Cellipse cx='250' cy='50' rx='50' ry='50'/%3E%3Cellipse cx='350' cy='50' rx='50' ry='50'/%3E%3Cellipse cx='50' cy='150' rx='50' ry='50'/%3E%3Cellipse cx='350' cy='150' rx='50' ry='50'/%3E%3Cellipse cx='50' cy='250' rx='50' ry='50'/%3E%3Cellipse cx='350' cy='250' rx='50' ry='50'/%3E%3Cellipse cx='50' cy='350' rx='50' ry='50'/%3E%3Cellipse cx='150' cy='350' rx='50' ry='50'/%3E%3Cellipse cx='250' cy='350' rx='50' ry='50'/%3E%3Cellipse cx='350' cy='350' rx='50' ry='50'/%3E%3C/g%3E%3C/svg%3E") center / 100% 100% no-repeat;
-  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 400' preserveAspectRatio='none'%3E%3Crect x='24' y='24' width='352' height='352'/%3E%3Cg%3E%3Cellipse cx='50' cy='50' rx='50' ry='50'/%3E%3Cellipse cx='150' cy='50' rx='50' ry='50'/%3E%3Cellipse cx='250' cy='50' rx='50' ry='50'/%3E%3Cellipse cx='350' cy='50' rx='50' ry='50'/%3E%3Cellipse cx='50' cy='150' rx='50' ry='50'/%3E%3Cellipse cx='350' cy='150' rx='50' ry='50'/%3E%3Cellipse cx='50' cy='250' rx='50' ry='50'/%3E%3Cellipse cx='350' cy='250' rx='50' ry='50'/%3E%3Cellipse cx='50' cy='350' rx='50' ry='50'/%3E%3Cellipse cx='150' cy='350' rx='50' ry='50'/%3E%3Cellipse cx='250' cy='350' rx='50' ry='50'/%3E%3Cellipse cx='350' cy='350' rx='50' ry='50'/%3E%3C/g%3E%3C/svg%3E") center / 100% 100% no-repeat;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1016 879' preserveAspectRatio='none'%3E%3Crect x='169' y='169' width='678' height='541'/%3E%3Cg%3E%3Ccircle cx='169' cy='169' r='169'/%3E%3Ccircle cx='381' cy='169' r='169'/%3E%3Ccircle cx='614' cy='169' r='169'/%3E%3Ccircle cx='847' cy='169' r='169'/%3E%3Ccircle cx='847' cy='372' r='169'/%3E%3Ccircle cx='847' cy='541' r='169'/%3E%3Ccircle cx='847' cy='710' r='169'/%3E%3Ccircle cx='599' cy='710' r='169'/%3E%3Ccircle cx='406' cy='710' r='169'/%3E%3Ccircle cx='169' cy='710' r='169'/%3E%3Ccircle cx='169' cy='507' r='169'/%3E%3Ccircle cx='169' cy='320' r='169'/%3E%3C/g%3E%3C/svg%3E") center / 100% 100% no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1016 879' preserveAspectRatio='none'%3E%3Crect x='169' y='169' width='678' height='541'/%3E%3Cg%3E%3Ccircle cx='169' cy='169' r='169'/%3E%3Ccircle cx='381' cy='169' r='169'/%3E%3Ccircle cx='614' cy='169' r='169'/%3E%3Ccircle cx='847' cy='169' r='169'/%3E%3Ccircle cx='847' cy='372' r='169'/%3E%3Ccircle cx='847' cy='541' r='169'/%3E%3Ccircle cx='847' cy='710' r='169'/%3E%3Ccircle cx='599' cy='710' r='169'/%3E%3Ccircle cx='406' cy='710' r='169'/%3E%3Ccircle cx='169' cy='710' r='169'/%3E%3Ccircle cx='169' cy='507' r='169'/%3E%3Ccircle cx='169' cy='320' r='169'/%3E%3C/g%3E%3C/svg%3E") center / 100% 100% no-repeat;
 }
 
 /* ---------- 진행 막대 · 점 ---------- */
@@ -717,7 +716,7 @@ svg {
 }
 
 .scenes__main {
-  aspect-ratio: 1 / 1;
+  aspect-ratio: 1016 / 879; /* Figma 132:16 틀 비율 — 원이 찌그러지지 않게 */
 }
 
 /* S1-4 장면 사진 — 큰 사진(뜨개 모양 틀)·다음 장면 썸네일을 가득 채움 */
