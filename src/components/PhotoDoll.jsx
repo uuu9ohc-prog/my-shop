@@ -100,24 +100,91 @@ const YARN_LOOK = {
   // 부슬부슬: 코가 보풀에 덮여 흐릿하고 살짝 밝음 + 가장자리로 삐져나온 털
   fluffy: { contrast: 0.55, blur: 3, light: 0.03, sat: 0.92, fibers: true },
   // 두툼: 사진의 작은 코는 지우고(큰 명암만 남김) 큰 뜨개 코를 새로 그림
-  chunky: { contrast: 1, blur: 6, light: 0.02, sat: 1, stitch: 20 },
+  chunky: { contrast: 1, blur: 6, light: 0.03, sat: 1, stitch: 22 },
 }
 
-// 큰 뜨개 코 한 칸의 밝기(-0.5 ~ 0.5): V 모양 두 갈래, 줄마다 반 칸 어긋남
+// 칸 번호 → 0~1 고정 난수 (코마다 조금씩 다르게)
+const cellRand = (a, b) => {
+  const n = Math.sin(a * 127.1 + b * 311.7) * 43758.5453
+  return n - Math.floor(n)
+}
+const smooth = (e0, e1, x) => {
+  const t = clamp01((x - e0) / (e1 - e0))
+  return t * t * (3 - 2 * t)
+}
+
+// 큰 뜨개 코의 밝기 변화(대략 -0.16 ~ +0.04): V 모양 두 갈래, 줄마다 반 칸 어긋남
+// 손뜨개처럼 보이도록: 줄이 살짝 물결치고, 코마다 크기·기울기·밝기가 조금씩 다르고,
+// 코 테두리는 부드럽게, 코 안에는 꼬인 실 결이 비스듬히 보임
 function stitchShade(x, y, s) {
+  // 줄 물결 — 낮은 주파수의 흔들림으로 반듯한 격자 느낌을 없앰
+  const wx = Math.sin(y * 0.021 + x * 0.006) * s * 0.22 + Math.sin(y * 0.057 + 1.3) * s * 0.08
+  const wy = Math.sin(x * 0.018 + y * 0.004 + 0.7) * s * 0.18 + Math.sin(x * 0.049) * s * 0.06
+  const X = x + wx
+  const Y = y + wy
   const h = s * 0.8
-  const row = Math.floor(y / h)
-  const xo = x + (row % 2) * s * 0.5
-  const u = (xo % s) / s - 0.5
-  const v = (y % h) / h - 0.5
+  const row = Math.floor(Y / h)
+  const xo = X + (row & 1) * s * 0.5
+  const col = Math.floor(xo / s)
+  const u = xo / s - col - 0.5
+  const v = Y / h - row - 0.5
   const left = u < 0
-  const du = u - (left ? -0.25 : 0.25)
-  const a = left ? 0.45 : -0.45 // 왼쪽 갈래는 \, 오른쪽 갈래는 / 로 기울기
-  const ru = du * Math.cos(a) - v * Math.sin(a)
-  const rv = du * Math.sin(a) + v * Math.cos(a)
-  const d2 = (ru / 0.24) ** 2 + (rv / 0.5) ** 2
-  if (d2 >= 1) return -0.5 // 코 사이 틈은 어둡게
-  return Math.sqrt(1 - d2) * 0.85 - 0.35 - rv * 0.25 // 가운데 볼록 + 위쪽이 조금 밝게
+  const side = left ? 0 : 1
+  const r1 = cellRand(row, col * 2 + side)
+  const r2 = cellRand(col * 2 + side + 17, row + 5)
+  const r3 = cellRand(row + 31, col * 2 + side + 9)
+  // 갈래마다 위치·기울기·굵기를 조금씩 흔듦
+  const du = u - (left ? -0.25 : 0.25) + (r1 - 0.5) * 0.05
+  const dv = v + (r2 - 0.5) * 0.08
+  const a = (left ? 0.45 : -0.45) + (r3 - 0.5) * 0.22 // 왼쪽 갈래는 \, 오른쪽 갈래는 /
+  const ru = du * Math.cos(a) - dv * Math.sin(a)
+  const rv = du * Math.sin(a) + dv * Math.cos(a)
+  const d2 = (ru / (0.23 + r1 * 0.04)) ** 2 + (rv / (0.48 + r2 * 0.06)) ** 2
+  const body = 1 - smooth(0.55, 1.08, d2) // 코 몸통(1) → 틈(0), 부드럽게 이어짐
+  const bump = Math.sqrt(Math.max(0, 1 - Math.min(d2, 1)))
+  // 꼬인 실 결: 갈래 방향에 비스듬한 가는 줄
+  const twist = Math.sin((rv * 5.5 + ru * (left ? 9 : -9)) * Math.PI) * 0.25 * bump
+  const lit = bump * 0.6 - rv * 0.3 + twist + (r3 - 0.5) * 0.3 // 볼록 + 위가 조금 밝게 + 결 + 코마다 밝기 차이
+  // 코는 거의 원래 밝기, 틈만 어둡게 → 하얗게 뜨지 않음
+  return body * (lit * 0.05 - 0.035) + (1 - body) * -0.13
+}
+
+const STITCH_MEAN = -0.065 // stitchShade 의 대략적인 평균값
+
+// 각 픽셀이 인형 테두리(투명한 곳)에서 얼마나 떨어져 있는지(px) — 두 번 훑는 거리 계산
+function edgeDistance(alpha, W, H) {
+  const d = new Float32Array(W * H)
+  for (let i = 0; i < d.length; i++) d[i] = alpha[i] < 128 ? 0 : 1e6
+  const D = Math.SQRT2
+  for (let y = 0; y < H; y++) {
+    for (let x = 0; x < W; x++) {
+      const i = y * W + x
+      if (d[i] === 0) continue
+      let m = d[i]
+      if (x > 0) m = Math.min(m, d[i - 1] + 1)
+      if (y > 0) {
+        m = Math.min(m, d[i - W] + 1)
+        if (x > 0) m = Math.min(m, d[i - W - 1] + D)
+        if (x < W - 1) m = Math.min(m, d[i - W + 1] + D)
+      }
+      d[i] = m
+    }
+  }
+  for (let y = H - 1; y >= 0; y--) {
+    for (let x = W - 1; x >= 0; x--) {
+      const i = y * W + x
+      if (d[i] === 0) continue
+      let m = d[i]
+      if (x < W - 1) m = Math.min(m, d[i + 1] + 1)
+      if (y < H - 1) {
+        m = Math.min(m, d[i + W] + 1)
+        if (x < W - 1) m = Math.min(m, d[i + W + 1] + D)
+        if (x > 0) m = Math.min(m, d[i + W - 1] + D)
+      }
+      d[i] = m
+    }
+  }
+  return d
 }
 
 // 같은 그림이 매번 같게 나오도록 고정 난수
@@ -297,7 +364,13 @@ export default function PhotoDoll({ design, colors, yarnId, reveal = false, clas
     if (look.blur > 0) blurInParts(detail, inPart, W, H, look.blur)
     if (look.stitch) {
       const s = look.stitch * (W / 500)
-      for (const idx of partPixels) detail[idx] += (stitchShade(idx % W, Math.floor(idx / W), s) - 0.5) * 0.15
+      // 인형 테두리 쪽은 둥글게 넘어가는 곳이라 코가 옅고 작게 보임 → 테두리에서 멀수록 진하게
+      const dist = edgeDistance(alpha, W, H)
+      for (const idx of partPixels) {
+        // 평균 밝기(STITCH_MEAN)는 그대로 두고 무늬 대비만 줄임 → 테두리가 하얗게 번지지 않음
+        const amp = 0.6 + 0.4 * smooth(0, s * 0.8, dist[idx])
+        detail[idx] += STITCH_MEAN + (stitchShade(idx % W, Math.floor(idx / W), s) - STITCH_MEAN) * amp
+      }
     }
 
     // 2) 고른 색으로 칠하기 — 질감은 털실에 맞춰 살리거나 뭉갬
