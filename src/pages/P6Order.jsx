@@ -2,7 +2,6 @@ import { Link } from 'react-router-dom'
 import DollPreview from '../components/DollPreview.jsx'
 import SummaryList from '../components/SummaryList.jsx'
 import { ArrowRight } from '../components/Icons.jsx'
-import { PRODUCTION_PERIOD, formatPrice, getPrice } from '../data/pricing.js'
 import { getYarn } from '../data/options.js'
 import { getSummary, useOrder } from '../state/OrderContext.jsx'
 
@@ -10,7 +9,6 @@ import { getSummary, useOrder } from '../state/OrderContext.jsx'
 export default function P6Order() {
   const { order } = useOrder()
   const summary = getSummary(order)
-  const price = getPrice(order.sizeId, order.yarnId)
 
   return (
     <main className="container page">
@@ -29,19 +27,7 @@ export default function P6Order() {
         <SummaryList rows={summary.rows} />
       </section>
 
-      {/* S6-2 가격 */}
-      <section className="order-info" aria-labelledby="price-title">
-        <h2 id="price-title">가격</h2>
-        <p className="price">{formatPrice(price)}</p>
-      </section>
-
-      {/* S6-3 제작 기간 */}
-      <section className="order-info" aria-labelledby="period-title">
-        <h2 id="period-title">제작 기간</h2>
-        <p>{PRODUCTION_PERIOD ?? '[미정]'}</p>
-      </section>
-
-      {/* S6-4 하단 버튼 */}
+      {/* 하단 버튼 */}
       <section className="actions">
         <div className="actions__buttons">
           {/* B6-1 → P5 (고른 값 유지) */}

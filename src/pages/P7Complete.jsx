@@ -1,6 +1,5 @@
 import { useNavigate } from 'react-router-dom'
 import BasketScene from '../components/BasketScene.jsx'
-import { formatPrice, getPrice } from '../data/pricing.js'
 import { getSize, getYarn } from '../data/options.js'
 import { getSummary, useOrder } from '../state/OrderContext.jsx'
 
@@ -31,10 +30,6 @@ export default function P7Complete() {
             <dd>
               {summary.colorNames.join('·')} / {yarn?.name} / {getSize(order.sizeId)?.name}
             </dd>
-          </div>
-          <div className="summary__row">
-            <dt>결제 금액</dt>
-            <dd>{formatPrice(getPrice(order.sizeId, order.yarnId))}</dd>
           </div>
         </dl>
       </section>

@@ -1298,31 +1298,6 @@ svg {
   align-items: center;
 }
 
-.order-info {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: var(--space-4);
-  padding-top: var(--space-5);
-  border-top: 1px solid var(--line);
-}
-
-.order-info h2 {
-  font-size: 18px;
-  font-weight: 600;
-}
-
-.order-info p {
-  font-size: 18px;
-}
-
-/* 가격만 다른 색 한 가지(red-500)로 구분 */
-.price {
-  font-size: 28px !important;
-  font-weight: 800;
-  color: var(--red-500);
-}
-
 /* ---------- P7 주문 완료 ---------- */
 .complete-summary {
   width: 100%;
