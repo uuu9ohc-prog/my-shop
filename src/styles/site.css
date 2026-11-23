@@ -1799,8 +1799,24 @@ svg {
   }
 }
 
+/* 히어로 소개 문단 — 글자를 하나씩 치지 않고 문단째 나타남.
+   시간·곡선은 이전 형광펜(0.7s, cubic-bezier(0.25, 0.8, 0.3, 1))과 같게 (2026-11-23) */
+.hero__lead {
+  animation: hero-lead-in 0.7s cubic-bezier(0.25, 0.8, 0.3, 1) var(--lead-delay, 0s) both;
+}
+
+@keyframes hero-lead-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .hero__text {
+  .hero__text,
+  .hero__lead {
     animation: none;
   }
 }
