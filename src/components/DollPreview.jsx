@@ -11,7 +11,7 @@ export default function DollPreview({ design, colors, yarnId, label, showParts =
   return (
     <figure className={`doll doll--${design.tone} ${className}`} role="img" aria-label={label}>
       {photo && PHOTO_DOLLS[design.id] ? (
-        <PhotoDoll design={design} colors={colors} reveal={photoReveal} />
+        <PhotoDoll design={design} colors={colors} yarnId={yarnId} reveal={photoReveal} />
       ) : (
         <DollArt design={design} colors={colors} yarnId={yarnId} />
       )}

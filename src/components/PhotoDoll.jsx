@@ -88,7 +88,112 @@ const hslToRgb = (h, s, l) => {
 const maskPart = (v) => (v === 0 || v >= 250 ? -1 : Math.round(v / 60) - 1)
 
 const luma = (r, g, b) => (0.299 * r + 0.587 * g + 0.114 * b) / 255
-const CONTRAST = 1.15 // 질감(밝기 차이)을 얼마나 살릴지
+const clamp01 = (v) => Math.min(1, Math.max(0, v))
+
+// 털실 느낌 (P5·P6 최종 이미지, 2026-11-23) — 털실을 안 넘기면(P3 미리보기) 기본값
+// contrast: 뜨개 질감(밝기 차이)을 얼마나 살릴지 · blur: 질감을 얼마나 뭉갤지(px)
+// light/sat: 밝기·채도 조정 · fibers: 보풀 그리기 · stitch: 큰 뜨개 코 크기(px, 사진 폭 500 기준)
+const YARN_LOOK = {
+  default: { contrast: 1.15, blur: 0, light: 0, sat: 1 },
+  // 벨벳: 코가 거의 안 보일 만큼 매끈하고 색이 진하고 부드러움
+  velvet: { contrast: 0.9, blur: 4, light: -0.01, sat: 1.05 },
+  // 부슬부슬: 코가 보풀에 덮여 흐릿하고 살짝 밝음 + 가장자리로 삐져나온 털
+  fluffy: { contrast: 0.55, blur: 3, light: 0.03, sat: 0.92, fibers: true },
+  // 두툼: 사진의 작은 코는 지우고(큰 명암만 남김) 큰 뜨개 코를 새로 그림
+  chunky: { contrast: 1, blur: 6, light: 0.02, sat: 1, stitch: 20 },
+}
+
+// 큰 뜨개 코 한 칸의 밝기(-0.5 ~ 0.5): V 모양 두 갈래, 줄마다 반 칸 어긋남
+function stitchShade(x, y, s) {
+  const h = s * 0.8
+  const row = Math.floor(y / h)
+  const xo = x + (row % 2) * s * 0.5
+  const u = (xo % s) / s - 0.5
+  const v = (y % h) / h - 0.5
+  const left = u < 0
+  const du = u - (left ? -0.25 : 0.25)
+  const a = left ? 0.45 : -0.45 // 왼쪽 갈래는 \, 오른쪽 갈래는 / 로 기울기
+  const ru = du * Math.cos(a) - v * Math.sin(a)
+  const rv = du * Math.sin(a) + v * Math.cos(a)
+  const d2 = (ru / 0.24) ** 2 + (rv / 0.5) ** 2
+  if (d2 >= 1) return -0.5 // 코 사이 틈은 어둡게
+  return Math.sqrt(1 - d2) * 0.85 - 0.35 - rv * 0.25 // 가운데 볼록 + 위쪽이 조금 밝게
+}
+
+// 같은 그림이 매번 같게 나오도록 고정 난수
+const seeded = (seed) => () => {
+  seed = (seed + 0x6d2b79f5) | 0
+  let t = Math.imul(seed ^ (seed >>> 15), 1 | seed)
+  t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t
+  return ((t ^ (t >>> 14)) >>> 0) / 4294967296
+}
+
+// 부위 안에서만 평균을 내는 상자 흐림 (가로 → 세로)
+function blurInParts(values, inPart, W, H, r) {
+  const tmp = new Float32Array(values.length)
+  const pass = (src, dst, horizontal) => {
+    for (let a = 0; a < (horizontal ? H : W); a++) {
+      for (let b = 0; b < (horizontal ? W : H); b++) {
+        const idx = horizontal ? a * W + b : b * W + a
+        if (inPart[idx] < 0) continue
+        let sum = 0
+        let n = 0
+        for (let k = -r; k <= r; k++) {
+          const bb = b + k
+          if (bb < 0 || bb >= (horizontal ? W : H)) continue
+          const j = horizontal ? a * W + bb : bb * W + a
+          if (inPart[j] !== inPart[idx]) continue
+          sum += src[j]
+          n++
+        }
+        dst[idx] = sum / n
+      }
+    }
+  }
+  pass(values, tmp, true)
+  pass(tmp, values, false)
+}
+
+// 부슬부슬 털실의 보풀: 몸 위의 잔털 + 가장자리 밖으로 삐져나온 털
+function drawFibers(ctx, { W, H, alpha, inPart, targets, partPixels, edgePixels }) {
+  const rand = seeded(7)
+  const k = W / 500 // 사진 크기에 맞춰 털 길이 조정
+  const stroke = (x, y, angle, len, t, lift, a, w) => {
+    const bend = (rand() - 0.5) * len * 0.8
+    const ex = x + Math.cos(angle) * len
+    const ey = y + Math.sin(angle) * len
+    const mx = (x + ex) / 2 - Math.sin(angle) * bend
+    const my = (y + ey) / 2 + Math.cos(angle) * bend
+    ctx.strokeStyle = `hsla(${t[0] * 360},${t[1] * 85}%,${clamp01(t[2] + lift) * 100}%,${a})`
+    ctx.lineWidth = w
+    ctx.beginPath()
+    ctx.moveTo(x, y)
+    ctx.quadraticCurveTo(mx, my, ex, ey)
+    ctx.stroke()
+  }
+  ctx.lineCap = 'round'
+  // 몸 위의 잔털
+  const bodyCount = Math.floor(partPixels.length / 110)
+  for (let n = 0; n < bodyCount; n++) {
+    const idx = partPixels[Math.floor(rand() * partPixels.length)]
+    const t = targets[inPart[idx]]
+    stroke(idx % W, Math.floor(idx / W), rand() * Math.PI * 2, (3 + rand() * 6) * k, t, 0.14, 0.3 + rand() * 0.25, (0.5 + rand() * 0.5) * k)
+  }
+  // 가장자리 밖으로 삐져나온 털 (바깥 방향 = 투명한 쪽)
+  const at = (x, y) => (x < 0 || y < 0 || x >= W || y >= H ? 0 : alpha[y * W + x])
+  const edgeCount = Math.floor(edgePixels.length / 2)
+  for (let n = 0; n < edgeCount; n++) {
+    const idx = edgePixels[Math.floor(rand() * edgePixels.length)]
+    const x = idx % W
+    const y = Math.floor(idx / W)
+    const nx = at(x - 3, y) - at(x + 3, y)
+    const ny = at(x, y - 3) - at(x, y + 3)
+    if (nx === 0 && ny === 0) continue
+    const t = targets[inPart[idx]]
+    const angle = Math.atan2(ny, nx) + (rand() - 0.5) * 1.3
+    stroke(x, y, angle, (4 + rand() * 8) * k, t, 0.08, 0.45 + rand() * 0.3, (0.5 + rand() * 0.6) * k)
+  }
+}
 
 // Pixel Reveal: 처음 그릴 때 아무것도 없다가 위에서부터 픽셀 칸이 하나씩 생기며 나타남 (P5, 2026-11-17)
 const REVEAL_MS = 1600 // 전체 시간
@@ -125,7 +230,7 @@ function pixelReveal(ctx, image, onDone) {
   return () => cancelAnimationFrame(raf)
 }
 
-export default function PhotoDoll({ design, colors, reveal = false, className = '' }) {
+export default function PhotoDoll({ design, colors, yarnId, reveal = false, className = '' }) {
   const canvasRef = useRef(null)
   const dataRef = useRef(null) // { base, mask, refs }
   const [ready, setReady] = useState(false)
@@ -165,43 +270,89 @@ export default function PhotoDoll({ design, colors, reveal = false, className = 
     const canvas = canvasRef.current
     if (!ready || !data || !canvas) return
     const { base, mask, refs } = data
+    const look = YARN_LOOK[yarnId] ?? YARN_LOOK.default
+    const W = base.width
+    const H = base.height
+    const bd = base.data
     const targets = design.parts.map((_, i) => {
       const c = getColor(colors[i])
       return c ? rgbToHsl(...hexToRgb(c.hex)) : null
     })
-    const out = new ImageData(new Uint8ClampedArray(base.data), base.width, base.height)
-    const px = out.data
-    for (let i = 0; i < px.length; i += 4) {
+
+    // 1) 칠할 곳(부위) 표시 + 뜨개 질감(부위 평균보다 얼마나 밝고 어두운지) 읽기
+    const inPart = new Int8Array(W * H).fill(-1)
+    const detail = new Float32Array(W * H)
+    const alpha = new Uint8Array(W * H)
+    const partPixels = []
+    for (let idx = 0; idx < W * H; idx++) {
+      const i = idx * 4
+      alpha[idx] = bd[i + 3]
       const part = maskPart(mask.data[i])
-      const t = part >= 0 ? targets[part] : null
-      if (!t || px[i + 3] === 0) continue
+      if (part < 0 || !targets[part] || bd[i + 3] === 0) continue
+      inPart[idx] = part
+      if (bd[i + 3] < 250) continue // 반투명 가장자리는 질감 0
+      partPixels.push(idx)
+      detail[idx] = luma(bd[i], bd[i + 1], bd[i + 2]) - refs[part]
+    }
+    if (look.blur > 0) blurInParts(detail, inPart, W, H, look.blur)
+    if (look.stitch) {
+      const s = look.stitch * (W / 500)
+      for (const idx of partPixels) detail[idx] += (stitchShade(idx % W, Math.floor(idx / W), s) - 0.5) * 0.15
+    }
+
+    // 2) 고른 색으로 칠하기 — 질감은 털실에 맞춰 살리거나 뭉갬
+    const out = new ImageData(new Uint8ClampedArray(bd), W, H)
+    const px = out.data
+    const edgePixels = []
+    for (let idx = 0; idx < W * H; idx++) {
+      const part = inPart[idx]
+      if (part < 0) continue
+      const i = idx * 4
+      const t = targets[part]
       // 반투명 가장자리는 질감 없이 고른 색 그대로 → 밝은 테두리(헤일로)가 생기지 않게
-      const l =
-        px[i + 3] < 250
-          ? t[2]
-          : Math.min(1, Math.max(0, t[2] + (luma(px[i], px[i + 1], px[i + 2]) - refs[part]) * CONTRAST))
-      const [r, g, b] = hslToRgb(t[0], t[1], l)
+      const l = px[i + 3] < 250 ? t[2] : clamp01(t[2] + look.light + detail[idx] * look.contrast)
+      const [r, g, b] = hslToRgb(t[0], clamp01(t[1] * look.sat), l)
       px[i] = r
       px[i + 1] = g
       px[i + 2] = b
+      if (look.fibers && px[i + 3] > 200) {
+        const x = idx % W
+        const y = Math.floor(idx / W)
+        if (x > 2 && y > 2 && x < W - 3 && y < H - 3 &&
+          (alpha[idx - 3] === 0 || alpha[idx + 3] === 0 || alpha[idx - 3 * W] === 0 || alpha[idx + 3 * W] === 0)) {
+          edgePixels.push(idx)
+        }
+      }
     }
-    canvas.width = base.width
-    canvas.height = base.height
+
+    canvas.width = W
+    canvas.height = H
     const ctx = canvas.getContext('2d')
+    let finalImage = out
+    // 3) 부슬부슬한 털실: 보풀을 덧그림 (따로 그린 뒤 한 장으로 합침)
+    if (look.fibers && partPixels.length) {
+      const work = document.createElement('canvas')
+      work.width = W
+      work.height = H
+      const wctx = work.getContext('2d', { willReadFrequently: true })
+      wctx.putImageData(out, 0, 0)
+      drawFibers(wctx, { W, H, alpha, inPart, targets, partPixels, edgePixels })
+      finalImage = wctx.getImageData(0, 0, W, H)
+    }
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     if (reveal && !revealedRef.current && !reduce) {
       revealedRef.current = true
       let done = false
-      const cancel = pixelReveal(ctx, out, () => (done = true))
+      const cancel = pixelReveal(ctx, finalImage, () => (done = true))
       // 중간에 정리되면(개발 모드 이중 실행 등) 다음에 다시 처음부터 나타나게
       return () => {
         cancel()
         if (!done) revealedRef.current = false
       }
     }
-    ctx.putImageData(out, 0, 0)
+    ctx.putImageData(finalImage, 0, 0)
     return undefined
-  }, [ready, key]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [ready, key, yarnId]) // eslint-disable-line react-hooks/exhaustive-deps
 
   return <canvas ref={canvasRef} className={`photo-doll ${className}`} aria-hidden="true" />
 }
