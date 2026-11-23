@@ -18,7 +18,8 @@ import duckMask from '../images/doll-duck-mask.png'
 //   곰 color_bear.png.jpg, 호랑이 color_tiger.png.jpg, 오리 duck.01.jpg
 // 부위 나누기: 부위마다 실 색이 달라 색으로 나눔. 입 주변·코·입·수염 자수는 바꾸지 않음(255)
 // 사진은 배경을 투명하게 따낸(누끼) RGBA PNG — 가장자리는 반투명으로 부드럽게
-// 마스크 PNG의 밝기: 0 배경, 60·120·180·240 → 부위 0·1·2·3 (design.parts 순서), 255 → 그대로 두는 곳(입 주변·코·입·자수)
+// 마스크 PNG의 밝기: 0 배경, 60·120·180·240 → 부위 0·1·2·3 (design.parts 순서), 255 → 그대로 두는 곳(입 주변·코·입·자수),
+//   250 → 바닥 그림자(색 기운만 빼서 회색으로)
 // 색 입히기: 사진의 밝고 어두운 무늬(뜨개 질감)는 살리고, 색상·채도는 고른 색으로 바꿈
 export const PHOTO_DOLLS = {
   dog: { base: dogBase, mask: dogMask },
@@ -86,6 +87,7 @@ const hslToRgb = (h, s, l) => {
 
 // 마스크 값 → 부위 번호 (-1 = 배경이거나 그대로 두는 곳)
 const maskPart = (v) => (v === 0 || v >= 250 ? -1 : Math.round(v / 60) - 1)
+const SHADOW = 250 // 마스크에서 바닥 그림자 표시 값
 
 const luma = (r, g, b) => (0.299 * r + 0.587 * g + 0.114 * b) / 255
 const clamp01 = (v) => Math.min(1, Math.max(0, v))
@@ -379,7 +381,17 @@ export default function PhotoDoll({ design, colors, yarnId, reveal = false, clas
     const edgePixels = []
     for (let idx = 0; idx < W * H; idx++) {
       const part = inPart[idx]
-      if (part < 0) continue
+      if (part < 0) {
+        // 바닥 그림자(마스크 250): 원래 사진의 색 기운을 빼고 밝기만 남김 → 어떤 색을 골라도 회색 그림자
+        const i = idx * 4
+        if (mask.data[i] === SHADOW && px[i + 3] > 0) {
+          const v = luma(px[i], px[i + 1], px[i + 2]) * 255
+          px[i] = v
+          px[i + 1] = v
+          px[i + 2] = v
+        }
+        continue
+      }
       const i = idx * 4
       const t = targets[part]
       // 반투명 가장자리는 질감 없이 고른 색 그대로 → 밝은 테두리(헤일로)가 생기지 않게
