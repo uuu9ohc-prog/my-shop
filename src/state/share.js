@@ -8,7 +8,8 @@ export function buildShareUrl(order) {
   const design = getDesign(order.designId)
   const colors = design.parts.map((_, i) => order.colors[i] ?? '').join(',')
   const params = new URLSearchParams({ c: colors, y: order.yarnId ?? '', s: order.sizeId ?? '' })
-  return `${window.location.origin}/custom/${design.id}?${params.toString()}`
+  // BASE_URL('/my-shop/')을 꼭 넣어야 배포 주소(GitHub Pages)에서 열림 (2026-11-26)
+  return `${window.location.origin}${import.meta.env.BASE_URL}custom/${design.id}?${params.toString()}`
 }
 
 // 주소의 값 중 올바른 것만 꺼냄. 공유 값이 없으면 null

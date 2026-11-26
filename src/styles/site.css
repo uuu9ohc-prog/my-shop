@@ -187,6 +187,7 @@ svg {
   letter-spacing: -0.03em;
   color: var(--ink);
   text-decoration: none;
+  white-space: nowrap; /* 휴대폰에서 '손뜬 / 스튜디오' 두 줄로 꺾이지 않게 (2026-11-26) */
   justify-self: start;
 }
 
@@ -314,6 +315,12 @@ svg {
   text-align: right;
   font-size: 14px;
   color: var(--ink-soft);
+}
+
+/* 글꼴 출처 표기 — 다른 푸터 글보다 한 단계 작게 */
+.site-footer__credit {
+  margin-top: var(--space-2);
+  font-size: 13px;
 }
 
 /* ---------- 버튼 ---------- */
@@ -1543,6 +1550,40 @@ svg {
 @media (max-width: 768px) {
   .display-hero {
     font-size: 36px;
+  }
+
+  /* 헤더 로고 — 아이콘 4개와 한 줄에 들어가게 조금 작게 (2026-11-26) */
+  .site-header .logo {
+    font-size: 18px;
+  }
+
+  .site-header .logo__mark {
+    width: 24px;
+    height: 24px;
+  }
+
+  /* 히어로 글·버튼 — 상자 비율로 줄이면 휴대폰에서 버튼 글자 약 11px·높이 37px로 너무 작아져
+     최소 크기를 둠: 본문 15px, 버튼 높이 48px·글자 15px (2026-11-26) */
+  .hero__text p {
+    font-size: max(15px, calc(var(--hero-u) * 4.13));
+  }
+
+  .hero__text .btn--primary {
+    height: max(48px, calc(var(--hero-u) * 11.37));
+    min-width: max(180px, calc(var(--hero-u) * 40.57));
+    gap: max(8px, calc(var(--hero-u) * 1.55));
+    padding: 0 max(6px, calc(var(--hero-u) * 1.55)) 0 max(20px, calc(var(--hero-u) * 4.13));
+    font-size: max(15px, calc(var(--hero-u) * 3.36));
+  }
+
+  .hero__text .btn__arrow {
+    width: max(36px, calc(var(--hero-u) * 8.27));
+    height: max(36px, calc(var(--hero-u) * 8.27));
+  }
+
+  .hero__text .btn__arrow svg {
+    width: max(16px, calc(var(--hero-u) * 3.6));
+    height: max(16px, calc(var(--hero-u) * 3.6));
   }
 
   .section-title,
