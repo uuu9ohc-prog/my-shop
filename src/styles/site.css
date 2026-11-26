@@ -625,6 +625,21 @@ svg {
   --accent: var(--ink-faint);
 }
 
+/* 휴대폰: 캐러셀을 화면 양 끝까지 펼치고 카드를 키움. 옆 카드는 가장자리에서 부드럽게 사라짐
+   (전에는 본문 여백에서 딱 잘리고 카드가 약 126px로 작았음, 2026-11-26) */
+@media (max-width: 640px) {
+  .browse-rail.album-rail {
+    --card-size: min(52vw, 220px);
+    width: 100vw;
+    margin-inline: calc(50% - 50vw);
+  }
+
+  .browse-rail .album-rail__stage {
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 14%, #000 86%, transparent);
+    mask-image: linear-gradient(90deg, transparent, #000 14%, #000 86%, transparent);
+  }
+}
+
 .browse-rail.album-rail:focus-visible {
   box-shadow: none;
   outline: 2px solid var(--red-500);
@@ -1564,26 +1579,42 @@ svg {
 
   /* 히어로 글·버튼 — 상자 비율로 줄이면 휴대폰에서 버튼 글자 약 11px·높이 37px로 너무 작아져
      최소 크기를 둠: 본문 15px, 버튼 높이 48px·글자 15px (2026-11-26) */
+  /* 위쪽 한도(PC 크기)도 둠 — 태블릿(약 768px)에서는 상자가 화면 전체 너비라
+     비율대로면 제목 약 59px·본문 약 27px로 PC보다 커짐 (2026-11-26) */
+  .hero__text .display-hero {
+    font-size: clamp(26px, calc(var(--hero-u) * 8.5), 45px);
+  }
+
   .hero__text p {
-    font-size: max(15px, calc(var(--hero-u) * 4.13));
+    font-size: clamp(15px, calc(var(--hero-u) * 4.13), 20px);
   }
 
   .hero__text .btn--primary {
-    height: max(48px, calc(var(--hero-u) * 11.37));
-    min-width: max(180px, calc(var(--hero-u) * 40.57));
-    gap: max(8px, calc(var(--hero-u) * 1.55));
-    padding: 0 max(6px, calc(var(--hero-u) * 1.55)) 0 max(20px, calc(var(--hero-u) * 4.13));
-    font-size: max(15px, calc(var(--hero-u) * 3.36));
+    height: clamp(48px, calc(var(--hero-u) * 11.37), 60px);
+    min-width: clamp(180px, calc(var(--hero-u) * 40.57), 215px);
+    gap: clamp(8px, calc(var(--hero-u) * 1.55), 10px);
+    padding: 0 clamp(6px, calc(var(--hero-u) * 1.55), 8px) 0 clamp(20px, calc(var(--hero-u) * 4.13), 22px);
+    font-size: clamp(15px, calc(var(--hero-u) * 3.36), 18px);
   }
 
   .hero__text .btn__arrow {
-    width: max(36px, calc(var(--hero-u) * 8.27));
-    height: max(36px, calc(var(--hero-u) * 8.27));
+    width: clamp(36px, calc(var(--hero-u) * 8.27), 44px);
+    height: clamp(36px, calc(var(--hero-u) * 8.27), 44px);
   }
 
   .hero__text .btn__arrow svg {
-    width: max(16px, calc(var(--hero-u) * 3.6));
-    height: max(16px, calc(var(--hero-u) * 3.6));
+    width: clamp(16px, calc(var(--hero-u) * 3.6), 20px);
+    height: clamp(16px, calc(var(--hero-u) * 3.6), 20px);
+  }
+
+  /* OV-01 저장·공유 — 이미지와 버튼 사이가 휑하지 않게 간격을 줄임 (2026-11-26) */
+  .overlay__window {
+    gap: var(--space-4);
+  }
+
+  /* '저장했어요' 알림 자리는 남겨 두되(버튼이 밀리지 않게) 위아래 간격만 줄임 */
+  .overlay__flash {
+    margin-block: calc(-1 * var(--space-2));
   }
 
   .section-title,
