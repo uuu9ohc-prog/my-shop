@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import Placeholder from '../components/Placeholder.jsx'
 import Footer from '../components/Footer.jsx'
 import { ArrowLeft, ArrowRight } from '../components/Icons.jsx'
@@ -11,6 +11,7 @@ import sceneBed from '../images/scene-bed.jpg'
 import sceneBeach from '../images/scene-beach.jpg'
 import PixelSnow from '../components/PixelSnow.jsx'
 import { useScrollReveal, useSwipe } from '../hooks.js'
+import { useOrder } from '../state/OrderContext.jsx'
 
 // S1-1 소개 문구: 문단마다 한 번에 나타남 (타이핑·형광펜 효과 제거, 2026-11-23)
 // 나타나는 시간·곡선은 이전 형광펜과 같게(0.7s) — site.css '.hero__lead'
@@ -27,6 +28,17 @@ const SCENES = [
 
 export default function P1Home() {
   const [scene, setScene] = useState(0)
+
+  // P7 '처음으로'(B7-1)로 들어오면 여기 도착한 뒤에 고른 값을 지움 (P7Complete.jsx 참고, 2026-11-26)
+  // 지운 뒤 표시를 없애서 뒤로·앞으로 가기로 다시 들어와도 또 지우지 않게 함
+  const location = useLocation()
+  const navigate = useNavigate()
+  const { reset } = useOrder()
+  useEffect(() => {
+    if (!location.state?.resetOrder) return
+    reset()
+    navigate(location.pathname + location.hash, { replace: true, state: null })
+  }, [location, navigate, reset])
 
   const nextScene = (scene + 1) % SCENES.length
   const prevScene = (scene - 1 + SCENES.length) % SCENES.length

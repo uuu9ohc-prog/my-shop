@@ -6,14 +6,15 @@ import { getSummary, useOrder } from '../state/OrderContext.jsx'
 // P7 주문 완료 — 실제 결제 없이 완료 안내
 export default function P7Complete() {
   const navigate = useNavigate()
-  const { order, reset } = useOrder()
+  const { order } = useOrder()
   const summary = getSummary(order)
   const yarn = getYarn(order.yarnId)
 
   // B7-1 처음으로 → P1, 고른 값 초기화
+  // 여기서 바로 reset()하면 페이지가 바뀌기 전에 값이 비어, 아직 P7(RequireComplete)에 있는 채로
+  // '고른 디자인 없음 → P2' 이동이 먼저 일어남 (TC-03 실패, 2026-11-26). 그래서 P1에 도착한 뒤 지움
   const goHome = () => {
-    navigate('/home')
-    reset()
+    navigate('/home', { state: { resetOrder: true } })
   }
 
   return (
