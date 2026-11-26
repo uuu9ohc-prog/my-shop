@@ -8,11 +8,10 @@ import P2Designs from './pages/P2Designs.jsx'
 import P3Custom from './pages/P3Custom.jsx'
 import P4Making from './pages/P4Making.jsx'
 import P5Result from './pages/P5Result.jsx'
-import P6Order from './pages/P6Order.jsx'
 import P7Complete from './pages/P7Complete.jsx'
 import AlbumRailDemo from './pages/AlbumRailDemo.tsx'
 
-// 헤더가 있는 페이지 (P1, P2, P3, P5, P6, P7)
+// 헤더가 있는 페이지 (P1, P2, P3, P5, P7)
 function WithHeader() {
   return (
     <>
@@ -62,7 +61,8 @@ export default function App() {
           <Route path="/custom/:designId" element={<P3Custom />} />
           <Route element={<RequireComplete><Outlet /></RequireComplete>}>
             <Route path="/result" element={<P5Result />} />
-            <Route path="/order" element={<P6Order />} />
+            {/* P6 주문 확인은 없앰 — 예전 주소로 들어오면 P7로 */}
+            <Route path="/order" element={<Navigate to="/complete" replace />} />
             <Route path="/complete" element={<P7Complete />} />
           </Route>
         </Route>

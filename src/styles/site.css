@@ -118,7 +118,7 @@ svg {
   color: var(--ink);
 }
 
-/* P2·P3·P6·P7 페이지 제목 — 중간 대비 (본문 16px의 약 1.9배) */
+/* P2·P3·P7 페이지 제목 — 중간 대비 (본문 16px의 약 1.9배) */
 .page-title {
   display: grid;
   gap: var(--space-3);
@@ -1251,7 +1251,7 @@ svg {
   text-align: center;
 }
 
-/* ---------- 요약 (P5·P6·P7) ---------- */
+/* ---------- 요약 (P5·P7) ---------- */
 .summary {
   display: grid;
 }
@@ -1288,14 +1288,6 @@ svg {
   max-width: 560px;
   margin: 0 auto;
   font-size: 17px;
-}
-
-/* ---------- P6 주문 확인 ---------- */
-.order-summary {
-  display: grid;
-  grid-template-columns: 240px 1fr;
-  gap: var(--space-6);
-  align-items: center;
 }
 
 /* ---------- P7 주문 완료 ---------- */
@@ -1568,7 +1560,6 @@ svg {
   }
 
   .hero,
-  .order-summary,
   .scenes {
     grid-template-columns: 1fr;
   }

@@ -48,8 +48,8 @@ export default function P5Result() {
           <button type="button" className="btn btn--outline" onClick={() => setShareOpen(true)}>
             저장·공유
           </button>
-          {/* B5-1 핵심 행동 → P6 */}
-          <Link to="/order" className="btn btn--primary">
+          {/* B5-1 핵심 행동 → P7 (P6 주문 확인 단계 없앰) */}
+          <Link to="/complete" className="btn btn--primary">
             주문하기
             <span className="btn__arrow"><ArrowRight /></span>
           </Link>

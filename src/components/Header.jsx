@@ -15,7 +15,7 @@ const MENU_LINKS = [
   { to: '/designs', label: '디자인 둘러보기' }, // P2 (캐러셀을 P1 S1-2에서 P2로 옮김, 2026-11-17)
 ]
 
-// 공통 GNB 헤더 — P1, P2, P3, P5, P6, P7
+// 공통 GNB 헤더 — P1, P2, P3, P5, P7
 // 오른쪽 원형 메뉴 버튼: Figma 91:37 (2026-11-16 답변: 검색·찜·장바구니는 넣지 않음)
 export default function Header() {
   const [open, setOpen] = useState(false)
